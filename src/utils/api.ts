@@ -1,7 +1,7 @@
 import { ElMessage } from 'element-plus'
 import AxiosApi from './axios'
 
-const host = '//union.vip.com/'
+const host = ''
 
 class PackApi extends AxiosApi {
     constructor(options = {}) {
@@ -12,7 +12,7 @@ class PackApi extends AxiosApi {
         let url = response.config.url
         if (url === this.getAbsoluteApi('user.login')) {
             ElMessage.warning('无权限访问')
-            window.location.href = 'http://err.vip.com/404.html'
+            window.location.href = ''
         } else {
             ElMessage.warning('无权限，请稍后再试')
         }
@@ -23,10 +23,10 @@ class PackApi extends AxiosApi {
             /*this.redirect('user.login', {
                 r: window.location.hash
             });*/
-            window.location.href = 'http://err.vip.com/404.html'
+            window.location.href = ''
         } else {
             ElMessage.warning('登录已过期，请重新登录')
-            window.location.href = 'http://err.vip.com/404.html'
+            window.location.href = ''
         }
     }
 }
