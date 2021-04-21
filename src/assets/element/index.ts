@@ -1,4 +1,4 @@
-import { App } from 'vue';
+import { App } from 'vue'
 
 import {
     ElButton,
@@ -8,32 +8,38 @@ import {
     ElMessageBox,
     ElNotification,
     ElSelect,
-    ElOption
-} from 'element-plus';
+    ElOption,
+    ElRow,
+    ElCol,
+    ElTable,
+    ElTableColumn,
+    ElTag,
+    ElPagination
+} from 'element-plus'
 
 const components = [
     ElButton,
     ElSelect,
-    ElOption
+    ElOption,
+    ElRow,
+    ElCol,
+    ElTable,
+    ElTableColumn,
+    ElTag,
+    ElPagination
 ]
 
-const plugins = [
-    ElInfiniteScroll,
-    ElLoading,
-    ElMessage,
-    ElMessageBox,
-    ElNotification,
-]
+const plugins = [ElInfiniteScroll, ElLoading, ElMessage, ElMessageBox, ElNotification]
 
 // 按需加载
 export function asRequired(app: App<Element>) {
     app.config.globalProperties.$ELEMENT = { size: 'small', zIndex: 3000 }
 
-    components.forEach(component => {
+    components.forEach((component) => {
         app.component(component.name, component)
     })
 
-    plugins.forEach(plugin => {
+    plugins.forEach((plugin) => {
         app.use(plugin)
     })
 }

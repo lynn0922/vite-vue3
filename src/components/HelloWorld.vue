@@ -1,64 +1,32 @@
 <template>
-    <h1>{{ msg }}</h1>
-
-    <p>
-        Recommended IDE setup:
-        <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
-        +
-        <a
-            href="https://marketplace.visualstudio.com/items?itemName=octref.vetur"
-            target="_blank"
-        >
-            Vetur
-        </a>
-        or
-        <a href="https://github.com/johnsoncodehk/volar" target="_blank"
-            >Volar</a
-        >
-        (if using
-        <code>&lt;script setup&gt;</code>)
-    </p>
-
-    <p>See <code>README.md</code> for more information.</p>
-
-    <p>
-        <a href="https://vitejs.dev/guide/features.html" target="_blank">
-            Vite Docs
-        </a>
-        |
-        <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
-    </p>
-
-    <button @click="count++">count is: {{ count }}</button>
-    <p>
-        Edit
-        <code>components/HelloWorld.vue</code> to test hot module replacement.
-    </p>
+    <div>msg</div>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue';
-import request from "@/utils/request";
+import { defineComponent, computed, getCurrentInstance, ComponentInternalInstance } from 'vue'
+// import { useStore } from 'vuex'
+// import { key } from '../store'
 
 export default defineComponent({
     name: 'HelloWorld',
-    props: {
-        msg: {
-            type: String,
-            required: true,
-        },
-    },
-    setup: () => {
-        const count = ref(0);
-        return { count };
-    },
-    methods: {
-        async getList(){
-            const res = await request({url: "/profile ",method: "get"})
-            console.log(res);
-        }
-    }
-});
+    // props: {
+    //     msg: {
+    //         type: String,
+    //         required: true
+    //     }
+    // },
+    // setup: async () => {
+    //     const store = useStore(key)
+    //     const count = computed(() => store.state.count)
+
+    //     const { ctx } = getCurrentInstance() as any
+    //     // const res = await ctx.$api.get('home.banner')
+    //     // console.log('%c 🥝 res: ', 'font-size:20px;background-color: #E41A6A;color:#fff;', res);
+        
+
+    //     return { count, inCrement: () => store.commit('increment') }
+    // }
+})
 </script>
 
 <style scoped>

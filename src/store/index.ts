@@ -1,21 +1,21 @@
-import { createStore } from "vuex";
-export default createStore({
-    state: {
-        listData: { 1: 10 },
-        num: 10
-    },
-    mutations: {
-        setData(state, value) {
-            state.listData = value
-        },
-        addNum(state) {
-            state.num = state.num + 10
+import { InjectionKey } from 'vue'
+import { createStore, Store } from 'vuex'
+
+export interface State {
+    count: number
+}
+
+export const key: InjectionKey<Store<State>> = Symbol()
+
+export const store = createStore<State>({
+    state() {
+        return {
+            count: 0
         }
     },
-    actions: {
-        setData(context, value) {
-            context.commit('setData', value)
-        },
-    },
-    modules: {}
-});
+    mutations: {
+        increment(state) {
+            state.count++
+        }
+    }
+})
