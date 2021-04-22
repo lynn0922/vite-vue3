@@ -58,7 +58,7 @@
                     <span v-else>
                         {{
                         getDataName({
-                        dataList: listTypeInfo[item.list],
+                        dataList: listTypeInfo ? listTypeInfo[item.list] : {},
                         value: 'value',
                         label: 'key',
                         data: scope.row[item.value]
@@ -89,9 +89,9 @@
             </el-table-column>
         </el-table>
         <!-- 分页组件 -->
-        <!-- <template v-if="paging">
+        <template v-if="paging">
             <div class="pagination-container">
-                <el-pagination
+                <!-- <el-pagination
                     :current-page.sync="listInfo.query.page"
                     :page-sizes="listInfo.pageSizes"
                     :page-size="listInfo.query.limit"
@@ -99,115 +99,108 @@
                     :total="listInfo.total"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                />
+                />-->
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="listInfo.query.page"
+                    :page-sizes="listInfo.pageSizes"
+                    :page-size="listInfo.query.limit"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="listInfo.total"
+                ></el-pagination>
             </div>
-        </template>-->
+        </template>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, reactive, toRefs } from 'vue'
 import { getDataName } from '@/utils/util'
-
-interface IfieldList {
-    type: string
-    label: string
-    btType: string
-    icon: string
-    event: string
-    show: boolean
-    value: string
-    list: string
-    width: string
-    children: any
-    minWidth: string
-    sortable: string
-    hidden: boolean
-    fixed: string
-    title: string
-}
+import { Basic, IfieldList, IState } from './tableTypes'
 
 export default defineComponent({
     name: 'PageTable',
+    components: {},
     props: {
         // 自定义类名
         className: {
-            type: String as any
+            type: String as PropType<string>
         },
+
         /**
          * 默认的排序列的 prop
          */
         sortProp: {
-            type: String as any,
+            type: String as PropType<string>,
             default: ''
         },
+
         /**
          * 默认的排序列的排序顺序：1-升序，非1-降序
          */
         sortOrder: {
-            type: Number as any,
+            type: Number as PropType<number>,
             default: 0
         },
+
         /**
          * 表格最大高度
          */
         maxHeight: {
-            type: Number as any,
+            type: Number as PropType<number | null>,
             default: null
         },
+
         /**
          * 表格高度
          */
         height: {
-            type: Number as any,
+            type: Number as PropType<number | null>,
             default: null
         },
 
         // 是否显示序号
         tabIndex: {
-            type: Boolean as any,
+            type: Boolean as PropType<boolean>,
             default: false
         },
+
         // 是否显示表头
         showHeader: {
-            type: Boolean as any,
+            type: Boolean as PropType<boolean>,
             default: true
         },
+
         // 是否有选择框
         checkBox: {
-            type: Boolean as any,
+            type: Boolean as PropType<boolean>,
             default: false
         },
-        // 选中列表
-        checkedList: {
-            type: Array as any,
-            default: () => {
-                return []
-            }
-        },
+
         // 类型列表
         listTypeInfo: {
-            type: Object as any
+            type: Object as PropType<Basic<any>>,
+            default: () => {}
         },
+
         // 表格字段配置
         fieldList: {
             type: Array as PropType<IfieldList[]>,
-            default: () => {
-                return []
-            }
+            default: () => []
         },
         // 操作栏配置
         handle: {
-            type: Object as any
+            type: Object as PropType<Basic<any>>
         },
         // 是否分页
         paging: {
-            type: Boolean as any,
+            type: Boolean as PropType<Boolean>,
             default: true
         },
         // 列表数据
         tableData: {
-            type: Array as any
+            type: Array as PropType<Basic<any>[]>
         }
     },
     emits: [
@@ -216,9 +209,22 @@ export default defineComponent({
         'row-click',
         'sort-change',
         'select-all',
-        'handleClick'
+        'handleClick',
+        'handleSizeChange',
+        'handleCurrentChange'
     ],
     setup(props, context) {
+        const state = reactive<IState>({
+            listInfo: {
+                total: 0,
+                pageSizes: [5, 10, 20, 50, 100],
+                query: {
+                    page: 1,
+                    limit: 10
+                }
+            }
+        })
+
         function tableRowClassName({ row, rowIndex }: { row: any; rowIndex: any }) {
             context.emit('tableRowClassName', { row, rowIndex })
         }
@@ -261,14 +267,30 @@ export default defineComponent({
             context.emit('handleClick', event, row)
         }
 
+        const handleSizeChange = (val: number) => {
+            const query = state.listInfo.query
+            query.limit = val
+            query.page = 1
+            context.emit('handleSizeChange', val)
+        }
+
+        const handleCurrentChange = (val: number) => {
+            state.listInfo.query.page = val
+            context.emit('handleCurrentChange', val)
+        }
+
         return {
+            ...toRefs(state),
+            props,
             getDataName,
             tableRowClassName,
             selectionChange,
             tableRowClick,
             tableSortChange,
             selectAll,
-            handleClick
+            handleClick,
+            handleSizeChange,
+            handleCurrentChange
         }
     }
 })

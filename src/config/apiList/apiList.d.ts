@@ -1,4 +1,5 @@
-declare interface Api {
+
+export interface IapiList {
     [index: string]: any
     common: {
         uploadImg: string
@@ -10,5 +11,9 @@ declare interface Api {
         logout: string
         userLogin: string
         userBase: string
+    }
+    qywxApi: {
+        userList: string,
+        userDetail: string
     }
 }

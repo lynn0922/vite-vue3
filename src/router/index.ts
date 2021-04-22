@@ -1,23 +1,31 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
-import userManage from "@/views/qywxManage/userManage.vue";
-import About from "@/components/About.vue";
+import { App } from 'vue'
+import { PageEnum } from '@/enum/route'
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        name: 'HelloWorld',
-        component: HelloWorld
-    },
-    {
-        path: '/about',
-        name: 'About',
-        component: About
+        name: 'Root',
+        redirect: PageEnum.USERMANAGE,
+        meta: {
+            title: 'Root'
+        }
     },
     {
         path: '/userManage',
         name: 'userManage',
-        component: userManage
+        meta: {
+            title: '个人用户管理'
+        },
+        component: () => import('@/views/qywxManage/userManage/userManage.vue')
+    },
+    {
+        path: '/userDetail',
+        name: 'userDetail',
+        meta: {
+            title: '个人用户详情'
+        },
+        component: () => import('@/views/qywxManage/userManage/userDetail.vue')
     }
 ]
 
@@ -25,5 +33,9 @@ const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
     routes
 })
+
+export function setupRouter(app: App<Element>) {
+    app.use(router)
+}
 
 export default router

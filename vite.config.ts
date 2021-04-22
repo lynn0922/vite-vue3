@@ -42,7 +42,7 @@ export default defineConfig({
     //     https: false,
     //     proxy: {
     //         '/': {
-    //             target: '',
+    //             target: 'http://union.vip.com',
     //             changeOrigin: true,
     //             ws: false,
     //             secure: false,

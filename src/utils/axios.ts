@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 import JSONBIG from 'json-bigint'
 import { ERROR_CODE, RESPONSE_STATUS } from '@/enum/error-code'
-import api from '@/config/api-list'
+import api from '@/config/apiList/api-list'
 import { getApiSign } from './util'
 
 // 默认配置  使用jsonbig转换响应数据
@@ -220,7 +220,7 @@ class AxiosApi {
             ...this.updateParamsApi(config)
         })
     }
-    get(url: string, params: any) {
+    get(url: string, params?: any) {
         let method = 'get'
         return this.axiosRequest({
             ...this.updateParamsApi({
@@ -230,7 +230,7 @@ class AxiosApi {
             })
         })
     }
-    post(url: string, params: any, data: any) {
+    post(url: string, params?: any, data?: any) {
         let method = 'post'
         return this.axiosRequest({
             ...this.updateParamsApi({

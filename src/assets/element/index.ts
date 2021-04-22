@@ -14,7 +14,13 @@ import {
     ElTable,
     ElTableColumn,
     ElTag,
-    ElPagination
+    ElPagination,
+    ElDialog,
+    ElInput,
+    ElInputNumber,
+    ElDatePicker,
+    ElFormItem,
+    ElForm
 } from 'element-plus'
 
 const components = [
@@ -26,13 +32,19 @@ const components = [
     ElTable,
     ElTableColumn,
     ElTag,
-    ElPagination
+    ElPagination,
+    ElDialog,
+    ElInput,
+    ElInputNumber,
+    ElDatePicker,
+    ElFormItem,
+    ElForm
 ]
 
 const plugins = [ElInfiniteScroll, ElLoading, ElMessage, ElMessageBox, ElNotification]
 
 // 按需加载
-export function asRequired(app: App<Element>) {
+export function useRequired(app: App) {
     app.config.globalProperties.$ELEMENT = { size: 'small', zIndex: 3000 }
 
     components.forEach((component) => {

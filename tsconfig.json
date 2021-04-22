@@ -10,13 +10,22 @@
         "esModuleInterop": true,
         "lib": ["esnext", "dom"],
         "types": ["vite/client", "node"],
-
+        "skipLibCheck": true, // 不检测第三方包
         // 解决别名无法识别问题
-        "baseUrl": "./",
+        "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "#/*": ["types/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-    "exclude": ["node_modules"]
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "types/**/*.d.ts",
+        "types/**/*.ts",
+        "vite.config.ts"
+    ],
+    "exclude": ["node_modules", "dist", "**/*.js"]
 }
