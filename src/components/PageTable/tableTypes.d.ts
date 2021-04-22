@@ -1,13 +1,12 @@
 export interface IfieldList {
-    [index: string]: any
     type?: string
     label?: string
     btType?: string
     icon?: string
     event?: string
     show?: boolean
-    value?: string
-    list?: string
+    value: string
+    list: string
     width?: string
     children?: any
     minWidth?: string
