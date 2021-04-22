@@ -13,17 +13,23 @@
             @row-click="tableRowClick"
             @sort-change="tableSortChange"
             border
-            style="width:100%"
+            style="width: 100%"
             @select-all="selectAll"
         >
             <!-- 选择框 -->
-            <el-table-column v-if="checkBox" align="center" :key="'selection'" type="selection" width="55" />
+            <el-table-column
+                v-if="checkBox"
+                align="center"
+                :key="'selection'"
+                type="selection"
+                width="55"
+            />
             <!-- 序号 -->
             <el-table-column v-if="tabIndex" type="index" width="50"></el-table-column>
 
             <!-- 列表 支持 自定义列 嵌套表格 标签显示 图片 -->
             <el-table-column
-                v-for="(item, index) in fieldList.filter(item => !item.hidden)"
+                v-for="(item, index) in fieldList.filter((item) => !item.hidden)"
                 :key="index"
                 :prop="item.value"
                 :label="item.label"
@@ -33,7 +39,7 @@
                 :width="item.width"
                 :min-width="item.minWidth || '100px'"
             >
-                <template v-slot="scope">
+                <template #default="scope">
                     <!-- solt 自定义列-->
                     <template v-if="item.type === 'slot'">
                         <slot :name="'col-' + item.value" :row="scope.row" />
@@ -53,29 +59,48 @@
                     <!-- 标签 -->
                     <el-tag v-else-if="item.type === 'tag'">{{ scope.row[item.value] }}</el-tag>
                     <!-- 图片 -->
-                    <img v-else-if="item.type === 'image' && scope.row[item.value]" height="50px" :src="scope.row[item.value]" />
+                    <img
+                        v-else-if="item.type === 'image' && scope.row[item.value]"
+                        height="50px"
+                        :src="scope.row[item.value]"
+                    />
                     <!-- 其他 -->
                     <span v-else>
                         {{
-                        getDataName({
-                        dataList: listTypeInfo ? listTypeInfo[item.list] : {},
-                        value: 'value',
-                        label: 'key',
-                        data: scope.row[item.value]
-                        }) || '-'
+                            getDataName({
+                                dataList: listTypeInfo ? listTypeInfo[item.list] : {},
+                                value: 'value',
+                                label: 'key',
+                                data: scope.row[item.value]
+                            }) || '-'
                         }}
                     </span>
                 </template>
             </el-table-column>
             <!-- 操作列 -->
-            <el-table-column v-if="handle" :key="'handle'" :fixed="handle.fixed" align="center" :label="handle.label" :width="handle.width">
+            <el-table-column
+                v-if="handle"
+                :key="'handle'"
+                :fixed="handle.fixed"
+                align="center"
+                :label="handle.label"
+                :width="handle.width"
+            >
                 <template v-slot="scope">
                     <template v-for="(item, index) in handle.btList">
                         <!-- 自定义操作类型 -->
-                        <slot v-if="item.slot" :name="'bt-' + item.event" :data="{ item, row: scope.row }" />
+                        <slot
+                            v-if="item.slot"
+                            :name="'bt-' + item.event"
+                            :data="{ item, row: scope.row }"
+                        />
                         <!-- 操作按钮 -->
                         <el-button
-                            v-if=" !item.slot && item.show && (!item.ifRender || item.ifRender(scope.row)) "
+                            v-if="
+                                !item.slot &&
+                                item.show &&
+                                (!item.ifRender || item.ifRender(scope.row))
+                            "
                             :key="index"
                             size="mini"
                             :type="item.type"
@@ -83,7 +108,8 @@
                             :disabled="item.disabled"
                             :loading="scope.row[item.loading]"
                             @click="handleClick(item.event, scope.row)"
-                        >{{ item.label }}</el-button>
+                            >{{ item.label }}</el-button
+                        >
                     </template>
                 </template>
             </el-table-column>
@@ -115,192 +141,199 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, toRefs } from 'vue'
-import { getDataName } from '@/utils/util'
-import { Basic, IfieldList, IState } from './tableTypes'
+    import { defineComponent, PropType, reactive, toRefs } from 'vue'
+    import { getDataName } from '@/utils/util'
+    import { Basic, IfieldList, IState } from './tableTypes'
 
-export default defineComponent({
-    name: 'PageTable',
-    components: {},
-    props: {
-        // 自定义类名
-        className: {
-            type: String as PropType<string>
-        },
+    export default defineComponent({
+        name: 'PageTable',
+        components: {},
+        props: {
+            // 自定义类名
+            className: {
+                type: String as PropType<string>
+            },
 
-        /**
-         * 默认的排序列的 prop
-         */
-        sortProp: {
-            type: String as PropType<string>,
-            default: ''
-        },
+            /**
+             * 默认的排序列的 prop
+             */
+            sortProp: {
+                type: String as PropType<string>,
+                default: ''
+            },
 
-        /**
-         * 默认的排序列的排序顺序：1-升序，非1-降序
-         */
-        sortOrder: {
-            type: Number as PropType<number>,
-            default: 0
-        },
+            /**
+             * 默认的排序列的排序顺序：1-升序，非1-降序
+             */
+            sortOrder: {
+                type: Number as PropType<number>,
+                default: 0
+            },
 
-        /**
-         * 表格最大高度
-         */
-        maxHeight: {
-            type: Number as PropType<number | null>,
-            default: null
-        },
+            /**
+             * 表格最大高度
+             */
+            maxHeight: {
+                type: Number as PropType<number | null>,
+                default: null
+            },
 
-        /**
-         * 表格高度
-         */
-        height: {
-            type: Number as PropType<number | null>,
-            default: null
-        },
+            /**
+             * 表格高度
+             */
+            height: {
+                type: Number as PropType<number | null>,
+                default: null
+            },
 
-        // 是否显示序号
-        tabIndex: {
-            type: Boolean as PropType<boolean>,
-            default: false
-        },
+            // 是否显示序号
+            tabIndex: {
+                type: Boolean as PropType<boolean>,
+                default: false
+            },
 
-        // 是否显示表头
-        showHeader: {
-            type: Boolean as PropType<boolean>,
-            default: true
-        },
+            // 是否显示表头
+            showHeader: {
+                type: Boolean as PropType<boolean>,
+                default: true
+            },
 
-        // 是否有选择框
-        checkBox: {
-            type: Boolean as PropType<boolean>,
-            default: false
-        },
+            // 是否有选择框
+            checkBox: {
+                type: Boolean as PropType<boolean>,
+                default: false
+            },
 
-        // 类型列表
-        listTypeInfo: {
-            type: Object as PropType<Basic<any>>,
-            default: () => {}
-        },
+            // 类型列表
+            listTypeInfo: {
+                type: Object as PropType<Basic<any>>,
+                default: () => {}
+            },
 
-        // 表格字段配置
-        fieldList: {
-            type: Array as PropType<IfieldList[]>,
-            default: () => []
-        },
-        // 操作栏配置
-        handle: {
-            type: Object as PropType<Basic<any>>
-        },
-        // 是否分页
-        paging: {
-            type: Boolean as PropType<Boolean>,
-            default: true
-        },
-        // 列表数据
-        tableData: {
-            type: Array as PropType<Basic<any>[]>
-        }
-    },
-    emits: [
-        'tableRowClassName',
-        'selection-change',
-        'row-click',
-        'sort-change',
-        'select-all',
-        'handleClick',
-        'handleSizeChange',
-        'handleCurrentChange'
-    ],
-    setup(props, context) {
-        const state = reactive<IState>({
-            listInfo: {
-                total: 0,
-                pageSizes: [5, 10, 20, 50, 100],
-                query: {
-                    page: 1,
-                    limit: 10
-                }
+            // 表格字段配置
+            fieldList: {
+                type: Array as PropType<IfieldList[]>,
+                default: () => []
+            },
+            // 操作栏配置
+            handle: {
+                type: Object as PropType<Basic<any>>
+            },
+            // 是否分页
+            paging: {
+                type: Boolean as PropType<Boolean>,
+                default: true
+            },
+            // 列表数据
+            tableData: {
+                type: Array as PropType<Basic<any>[]>
             }
-        })
+        },
+        emits: [
+            'tableRowClassName',
+            'selection-change',
+            'row-click',
+            'sort-change',
+            'select-all',
+            'handleClick',
+            'handleSizeChange',
+            'handleCurrentChange'
+        ],
+        setup(props, context) {
+            const state = reactive<IState>({
+                listInfo: {
+                    total: 0,
+                    pageSizes: [5, 10, 20, 50, 100],
+                    query: {
+                        page: 1,
+                        limit: 10
+                    }
+                }
+            })
 
-        function tableRowClassName({ row, rowIndex }: { row: any; rowIndex: any }) {
-            context.emit('tableRowClassName', { row, rowIndex })
-        }
+            function tableRowClassName({ row, rowIndex }: { row: any; rowIndex: any }) {
+                context.emit('tableRowClassName', { row, rowIndex })
+            }
 
-        function selectionChange(selection: any) {
-            /**
-             * 行勾选
-             */
-            context.emit('selection-change', selection)
-        }
+            function selectionChange(selection: any) {
+                /**
+                 * 行勾选
+                 */
+                context.emit('selection-change', selection)
+            }
 
-        function tableRowClick(row: any, event: any, column: any) {
-            /**
-             * 行点击
-             */
-            context.emit('row-click', { row, event, column })
-        }
+            function tableRowClick(row: any, event: any, column: any) {
+                /**
+                 * 行点击
+                 */
+                context.emit('row-click', { row, event, column })
+            }
 
-        function tableSortChange({ column, prop, order }: { column: any; prop: any; order: any }) {
-            /**
-             * 表格排序变化
-             * @type {object}
-             */
-            context.emit('sort-change', { column: prop, order })
-        }
+            function tableSortChange({
+                column,
+                prop,
+                order
+            }: {
+                column: any
+                prop: any
+                order: any
+            }) {
+                /**
+                 * 表格排序变化
+                 * @type {object}
+                 */
+                context.emit('sort-change', { column: prop, order })
+            }
 
-        function selectAll(selection: any) {
-            /**
-             * 全部勾选
-             * @type {object}
-             */
-            context.emit('select-all', selection)
-        }
+            function selectAll(selection: any) {
+                /**
+                 * 全部勾选
+                 * @type {object}
+                 */
+                context.emit('select-all', selection)
+            }
 
-        function handleClick(event: string, row: any) {
-            /**
-             * 点击事件
-             * @type {object}
-             */
-            context.emit('handleClick', event, row)
-        }
+            function handleClick(event: string, row: any) {
+                /**
+                 * 点击事件
+                 * @type {object}
+                 */
+                context.emit('handleClick', event, row)
+            }
 
-        const handleSizeChange = (val: number) => {
-            const query = state.listInfo.query
-            query.limit = val
-            query.page = 1
-            context.emit('handleSizeChange', val)
-        }
+            const handleSizeChange = (val: number) => {
+                const query = state.listInfo.query
+                query.limit = val
+                query.page = 1
+                context.emit('handleSizeChange', val)
+            }
 
-        const handleCurrentChange = (val: number) => {
-            state.listInfo.query.page = val
-            context.emit('handleCurrentChange', val)
-        }
+            const handleCurrentChange = (val: number) => {
+                state.listInfo.query.page = val
+                context.emit('handleCurrentChange', val)
+            }
 
-        return {
-            ...toRefs(state),
-            props,
-            getDataName,
-            tableRowClassName,
-            selectionChange,
-            tableRowClick,
-            tableSortChange,
-            selectAll,
-            handleClick,
-            handleSizeChange,
-            handleCurrentChange
+            return {
+                ...toRefs(state),
+                getDataName,
+                tableRowClassName,
+                selectionChange,
+                tableRowClick,
+                tableSortChange,
+                selectAll,
+                handleClick,
+                handleSizeChange,
+                handleCurrentChange
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-// 自定义表格相关
-.page-table {
-    .pagination-container {
-        padding: 15px 0;
+    // 自定义表格相关
+    .page-table {
+        .pagination-container {
+            padding: 15px 0;
+        }
     }
-}
 </style>
