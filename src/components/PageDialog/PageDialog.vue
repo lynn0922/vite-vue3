@@ -57,9 +57,10 @@
                 show: dialogFooter.value
             })
             watch(
-                dialogVisible,
-                (newValue) => {
+                ([dialogVisible, dialogtitle]),
+                ([newValue, newTitle]) => {
                     state.visible = newValue
+                    state.title = newTitle
                 },
                 { immediate: true }
             )

@@ -60,3 +60,42 @@ export const getDataName = (obj: { dataList: any[]; value: string; label: string
     }
     return name
 }
+
+/**
+ *
+ * @param {*} fieldList
+ * 初始化表单规则
+ */
+export const initRules = (fieldList: {
+    type: string
+    required: boolean
+    validator: any
+    value: string
+}) => {
+    const obj: { [index: string]: any } = {}
+    // 循环字段列表
+    for (const item of (fieldList as any)) {
+        const type = item.type === 'select' ? '选择' : '输入'
+        if (item.required) {
+            if (item.validator) {
+                obj[item.value] = {
+                    required: item.required,
+                    validator: item.validator,
+                    trigger: 'blur'
+                }
+            } else {
+                obj[item.value] = {
+                    required: item.required,
+                    message: '请' + type + item.label,
+                    trigger: 'blur'
+                }
+            }
+        } else if (item.validator) {
+            obj[item.value] = {
+                validator: item.validator,
+                trigger: 'blur'
+            }
+        }
+    }
+    return obj
+}

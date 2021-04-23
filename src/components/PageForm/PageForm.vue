@@ -1,6 +1,26 @@
 <template>
-    <el-form ref="form" class="page-form" :class="className" :model="data" :rules="rules" :label-width="labelWidth">
-        <el-form-item v-for="(item, index) in getConfigList()" :key="index" :prop="item.value" :label="item.label" :class="item.className">
+    <el-form
+        ref="formRef"
+        class="page-form"
+        :class="className"
+        :model="formdata"
+        :rules="rules"
+        :label-width="labelWidth"
+        :inline="inline"
+        :label-position="labelPosition"
+        :hide-required-asterisk="hideRequiredAsterisk"
+        :status-icon="statusIcon"
+        :disabled="disabled"
+    >
+        <el-form-item
+            v-for="(item, index) in fieldList.filter(
+                (item) => !item.hasOwnProperty('show') || (item.hasOwnProperty('show') && item.show)
+            )"
+            :key="index"
+            :prop="item.value"
+            :label="item.label"
+            :class="item.className"
+        >
             <!-- solt -->
             <template v-if="item.type === 'slot'">
                 <slot :name="'form-' + item.value" />
@@ -8,7 +28,7 @@
             <!-- 普通输入框 -->
             <el-input
                 v-if="item.type === 'input' || item.type === 'password'"
-                v-model="data[item.value]"
+                v-model="formdata[item.value]"
                 :type="item.type"
                 :disabled="item.disabled"
                 :placeholder="getPlaceholder(item)"
@@ -17,7 +37,7 @@
             <!-- 文本输入框 -->
             <el-input
                 v-if="item.type === 'textarea'"
-                v-model.trim="data[item.value]"
+                v-model.trim="formdata[item.value]"
                 :type="item.type"
                 :disabled="item.disabled"
                 :placeholder="getPlaceholder(item)"
@@ -27,8 +47,7 @@
             <!-- 计数器 -->
             <el-input-number
                 v-if="item.type === 'inputNumber'"
-                v-model="data[item.value]"
-                size="small"
+                v-model="formdata[item.value]"
                 :min="item.min"
                 :max="item.max"
                 @change="handleEvent(item.event)"
@@ -36,34 +55,39 @@
             <!-- 选择框 -->
             <el-select
                 v-if="item.type === 'select'"
-                v-model="data[item.value]"
+                v-model="formdata[item.value]"
                 :disabled="item.disabled"
+                :value-key="item.key"
+                :multiple="item.multiple"
+                :collapse-tags="item.collapseTags"
+                :filter-method="item.filterMethod"
+                :remote="item.remote"
+                :remote-method="item.remoteMethod"
+                :loading="item.loading"
+                :loading-text="item.loadingText"
+                :reserve-keyword="item.reserveKeyword"
+                :default-first-option="item.defaultFirstOption"
                 :clearable="item.clearable"
                 :filterable="item.filterable"
                 :placeholder="getPlaceholder(item)"
-                @change="handleEvent(item.event, data[item.value])"
+                @change="handleEvent(item.event, formdata[item.value])"
             >
-                <el-option v-for="(childItem, childIndex) in listTypeInfo[item.list]" :key="childIndex" :label="childItem.key" :value="childItem.value" />
+                <el-option
+                    v-for="(childItem, childIndex) in listTypeInfo[item.list]"
+                    :key="childIndex"
+                    :disabled="childItem.disabled"
+                    :label="childItem.key"
+                    :value="childItem.value"
+                />
             </el-select>
-            <!-- 日期选择框 -->
-            <el-date-picker
-                v-if="item.type === 'date'"
-                v-model="data[item.value]"
-                :type="item.dateType"
-                :picker-options="item.TimePickerOptions"
-                :clearable="item.clearable"
-                :disabled="item.disabled"
-                :placeholder="getPlaceholder(item)"
-                @focus="handleEvent(item.event)"
-            />
             <!-- 信息展示框 -->
             <el-tag v-if="item.type === 'tag'">
                 {{
                 getDataName({
-                dataList: listTypeInfo[item.list],
+                dataList: listTypeInfo ? listTypeInfo[item.list] : [],
                 value: 'value',
                 label: 'key',
-                data: data[item.value]
+                data: formdata[item.value]
                 }) || '-'
                 }}
             </el-tag>
@@ -74,7 +98,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, PropType, watch, ref } from 'vue'
 import { getDataName } from '@/utils/util'
-import { ElRef , Basic } from './formtypes'
+import { ElRef, Basic, Irules, IfieldList, IlistType } from './formtypes'
 
 export default defineComponent({
     name: 'PageForm',
@@ -84,53 +108,75 @@ export default defineComponent({
             type: String as PropType<string>
         },
         // 表单数据
-        data: {
+        formdata: {
             type: Object as PropType<Basic<any>>,
             default: () => {}
         },
         // 相关字段
         fieldList: {
-            type: Array as PropType<any[] | null>
+            type: Array as PropType<IfieldList[]>,
+            required: true
         },
         // 验证规则
         rules: {
-            type: Object as PropType<Basic<any>>
-        },
-        // 相关的列表
-        listTypeInfo: {
-            type: Object as PropType<Basic<any>>,
-            default: () => {}
+            type: Object as PropType<Basic<Irules[]>>
         },
         // label宽度
         labelWidth: {
             type: String as PropType<string>,
             default: '120px'
         },
+        // 行内表单模式
+        inline: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        // label 对齐方式
+        labelPosition: {
+            type: String as PropType<string>,
+            default: 'left'
+        },
+        // 必填字段是否显示红色星号
+        hideRequiredAsterisk: {
+            type: Boolean as PropType<boolean>,
+            default: true
+        },
+        // 是否反馈结果图标
+        statusIcon: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        // 禁止表单输入， 该字段开启， form-item 的disabled失效
+        disabled: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        // 相关的列表
+        listTypeInfo: {
+            type: Object as PropType<Basic<IlistType[]>>,
+            default: () => {}
+        },
+        // ref
         refObj: {
             type: Object as PropType<ElRef>
         }
     },
     emits: ['update:refObj', 'handleEvent', 'handleClick'],
     setup(props, { emit }) {
-        const refForm = ref<ElRef>(null)
+        const formRef = ref<ElRef>(null)
 
         onMounted(() => {
-            emit('update:refObj', refForm.value)
+            console.log()
+            emit('update:refObj', formRef.value)
         })
 
         watch(
-            () => props.data,
+            () => props.formdata,
             () => {
-                emit('update:refObj', refForm.value)
+                emit('update:refObj', formRef.value)
             }
         )
 
-        // 获取字段列表
-        const getConfigList = () => {
-            return props.fieldList?.filter(
-                (item) => !item.hasOwnProperty('show') || (item.hasOwnProperty('show') && item.show)
-            )
-        }
         // 得到placeholder的显示
         const getPlaceholder = (row: any) => {
             let placeholder
@@ -156,8 +202,8 @@ export default defineComponent({
             handleEvent,
             handleClick,
             getPlaceholder,
-            getConfigList,
-            getDataName
+            getDataName,
+            formRef
         }
     }
 })

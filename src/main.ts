@@ -6,10 +6,6 @@ import '@/assets/styles/index.scss'
 import { store, key } from './store'
 import router, { setupRouter } from './router'
 import { useGlobComp } from '@/components/index'
-import '@/assets/styles/theme.scss'
-
-
-
 
 
 ;(async () => {

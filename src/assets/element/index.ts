@@ -20,8 +20,11 @@ import {
     ElInputNumber,
     ElDatePicker,
     ElFormItem,
-    ElForm
+    ElForm,
+    locale
 } from 'element-plus'
+import lang from 'element-plus/lib/locale/lang/zh-cn'
+import 'dayjs/locale/zh-cn'
 
 const components = [
     ElButton,
@@ -42,6 +45,9 @@ const components = [
 ]
 
 const plugins = [ElInfiniteScroll, ElLoading, ElMessage, ElMessageBox, ElNotification]
+
+// element 默认使用英文， 需要更改为中文
+// locale(lang)
 
 // 按需加载
 export function useRequired(app: App) {

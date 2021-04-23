@@ -10,50 +10,46 @@
                 </el-col>
                 <el-col :span="18">
                     <div class="row-title">
-                        查看时间：2021.4.5 17:20:00
+                        <div class="one">查看时间：</div>
+                        <div class="two">2021.4.5 17:20:00</div>
                     </div>
                 </el-col>
                 <el-col :span="2">
                     <el-button type="primary">导出</el-button>
                 </el-col>
             </div>
-            <!-- <page-table
+            <page-table
                 :tableData="tableInfo.data"
+                :paging="tableInfo.paging"
+                :total="tableInfo.total"
+                @handleSizeChange="handleSizeChange"
+                @handleCurrentChange="handleCurrentChange"
                 :field-list="tableInfo.fieldList"
-                sortProp="name"
-                :sortOrder="1"
-                :list-type-info="listTypeInfo"
-                :handle="tableInfo.handle"
-            ></page-table> -->
+            ></page-table>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {
-    defineComponent,
-    computed,
-    getCurrentInstance,
-    ComponentInternalInstance,
-    onMounted,
-    toRefs
-} from 'vue'
+import { defineComponent, onMounted, toRefs } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePageTable } from "@/hooks/userManageHook/useUserDetail";
+import { usePageTable } from '@/hooks/userManageHook/useUserDetail'
 
 export default defineComponent({
     name: 'userDetail',
     setup() {
         const route = useRoute()
 
-        const { state } = usePageTable();
+        const { state, handleSizeChange, handleCurrentChange } = usePageTable()
 
         onMounted(() => {
             console.log('....userDetail', route.query.id)
         })
 
         return {
-            ...toRefs(state)
+            ...toRefs(state),
+            handleSizeChange,
+            handleCurrentChange
         }
     }
 })
@@ -71,11 +67,15 @@ export default defineComponent({
         align-items: center;
         border-bottom: 1px solid $--border-d7;
         margin-bottom: 20px;
-    }
 
-    .refresh {
-        color: $--color-primary;
-        cursor: pointer;
+        .row-title {
+            display: flex;
+            align-items: center;
+
+            .two{
+                margin-left: 20px;
+            }
+        }
     }
 }
 </style>

@@ -1,26 +1,49 @@
 export interface IfieldList {
-    type?: string
-    label?: string
-    btType?: string
-    icon?: string
-    event?: string
-    show?: boolean
     value: string
-    list: string
-    width?: string
-    children?: any
-    minWidth?: string
-    sortable?: boolean
-    hidden?: boolean
+    label: string
     fixed?: string
-    title?: string
+    align?: string
+    key?: string
+    type?: string
+    align?: string
+    sortable?: boolean
+    width?: string
+    minWidth?: string
+    children?: Ichildren[]
+    list: string
+    hidden?: boolean
 }
 
 export interface Ichildren {
-    value?: string
-    label?: string
+    key?: string
+    value: string
+    label: string
+    align?: string
     width?: string
     minWidth?: string
+}
+
+export interface Ihandle {
+    fixed?: string
+    align?: string
+    label: string
+    width?: string
+    btList: IbtList[]
+}
+
+interface IfRenderFn {
+    (row: any): any;
+}
+
+export interface IbtList {
+    slot?: boolean
+    event: string
+    ifRender?: IfRenderFn
+    type?: string
+    icon?: string
+    disabled?: boolean
+    label?: string
+    loading: string
 }
 
 export interface Basic<T extends any> {
@@ -31,28 +54,8 @@ export interface IlistTypeInfo {
     [index: string]: any
 }
 
-export interface IbtList {
-    show?: boolean
-    slot?: boolean
-    event?: string
-    ifRender?: () => {}
-    type?: string
-    icon?: string
-    disabled?: boolean
-    label?: string
-    loading?: string
-}
-
-export interface Ihandle {
-    fixed?: string
-    label?: string
-    width?: string
-    btList?: IbtList[]
-}
-
 export interface IState {
     listInfo: {
-        total: number
         pageSizes: number[]
         query: {
             page: number
