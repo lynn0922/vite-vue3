@@ -1,63 +1,10 @@
 import { App } from 'vue'
-
-import {
-    ElButton,
-    ElInfiniteScroll,
-    ElLoading,
-    ElMessage,
-    ElMessageBox,
-    ElNotification,
-    ElSelect,
-    ElOption,
-    ElRow,
-    ElCol,
-    ElTable,
-    ElTableColumn,
-    ElTag,
-    ElPagination,
-    ElDialog,
-    ElInput,
-    ElInputNumber,
-    ElDatePicker,
-    ElFormItem,
-    ElForm,
-    locale
-} from 'element-plus'
-import lang from 'element-plus/lib/locale/lang/zh-cn'
+import ElementPlus from 'element-plus'
+import 'element-plus/lib/theme-chalk/index.css'
 import 'dayjs/locale/zh-cn'
-
-const components = [
-    ElButton,
-    ElSelect,
-    ElOption,
-    ElRow,
-    ElCol,
-    ElTable,
-    ElTableColumn,
-    ElTag,
-    ElPagination,
-    ElDialog,
-    ElInput,
-    ElInputNumber,
-    ElDatePicker,
-    ElFormItem,
-    ElForm
-]
-
-const plugins = [ElInfiniteScroll, ElLoading, ElMessage, ElMessageBox, ElNotification]
-
-// element 默认使用英文， 需要更改为中文
-// locale(lang)
+import locale from 'element-plus/lib/locale/lang/zh-cn'
 
 // 按需加载
 export function useRequired(app: App) {
-    app.config.globalProperties.$ELEMENT = { size: 'small', zIndex: 3000 }
-
-    components.forEach((component) => {
-        app.component(component.name, component)
-    })
-
-    plugins.forEach((plugin) => {
-        app.use(plugin)
-    })
+    app.use(ElementPlus, { size: 'small', zIndex: 3000, locale })
 }

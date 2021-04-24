@@ -1,28 +1,24 @@
 const path = require('path')
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import styleImport from 'vite-plugin-style-import'
+
+const isDev = () => process.env.NODE_ENV === 'development'
 
 export default defineConfig({
-    plugins: [
-        vue(),
-        styleImport({
-            libs: [
-                {
-                    libraryName: 'element-plus',
-                    esModule: true,
-                    ensureStyleFile: true,
-                    resolveStyle: (name) => {
-                        name = name.slice(3)
-                        return `element-plus/packages/theme-chalk/src/${name}.scss`
-                    },
-                    resolveComponent: (name) => {
-                        return `element-plus/lib/${name}`
-                    }
-                }
-            ]
-        })
-    ],
+    plugins: [vue()],
+    
+    build: {
+        target: 'es2015',
+        brotliSize: false,
+        sourcemap: isDev() ? true : false,
+        terserOptions: {
+            compress: {
+                // drop_console: isDev() ? false : true,
+                // drop_debugger: isDev() ? false : true
+            }
+        },
+        chunkSizeWarningLimit: 1500
+    },
     css: {
         preprocessorOptions: {
             scss: {
@@ -36,18 +32,18 @@ export default defineConfig({
             // 配置别名
             '@': path.resolve(__dirname, './src')
         }
+    },
+    server: {
+        open: true,
+        // https: false,
+        // proxy: {
+        //     '/': {
+        //         target: 'http://union.vip.com',
+        //         changeOrigin: true,
+        //         ws: false,
+        //         secure: false,
+        //         ignorePath: true
+        //     }
+        // }
     }
-    // server: {
-    //     open: false,
-    //     https: false,
-    //     proxy: {
-    //         '/': {
-    //             target: 'http://union.vip.com',
-    //             changeOrigin: true,
-    //             ws: false,
-    //             secure: false,
-    //             ignorePath: true
-    //         }
-    //     }
-    // }
 })

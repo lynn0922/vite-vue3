@@ -10,6 +10,7 @@ import {
 import { useRoute, useRouter } from 'vue-router'
 import { getUserList } from '@/http/userManage'
 import { initRules } from '@/utils/util'
+import { ElMessageBox } from 'element-plus'
 
 export const useIndex = () => {
     const router = useRouter()
@@ -19,10 +20,10 @@ export const useIndex = () => {
     const state = reactive({
         dialogVisible: false,
         tagList: [
-            { id: 0, title: '固定标签' },
-            { id: 1, title: '动态标签' }
+            { name: '0', label: '固定标签' },
+            { name: '1', label: '动态标签' }
         ],
-        selectTag: 0,
+        activeName: '1',
         dialogtitle: '新建标签'
     })
 
@@ -46,6 +47,22 @@ export const useIndex = () => {
             if (!val) {
                 if (formInfo.ref) {
                     ;(formInfo.ref as any).resetFields()
+                    formState.formInfo.fieldList = [
+                        {
+                            label: '标签名称',
+                            value: 'tagname',
+                            type: 'input',
+                            required: true,
+                            className: 'el-form-block'
+                        },
+                        {
+                            label: '标识',
+                            value: 'id',
+                            type: 'input',
+                            required: true,
+                            className: 'el-form-block'
+                        }
+                    ]
                 }
                 resetForm()
             }
@@ -55,11 +72,6 @@ export const useIndex = () => {
     onMounted(() => {
         initFormRules()
     })
-
-    function handleSelectTag(num: number) {
-        state.selectTag = num
-    }
-
     const handleClick = (event: string, row: any) => {
         switch (event) {
             case 'check':
@@ -82,6 +94,17 @@ export const useIndex = () => {
 
                 break
             case 'del':
+                ElMessageBox({
+                    title: '删除标签',
+                    message: '删除后，所有标记此标签的用户将全部接触关联，请确认',
+                    showCancelButton: true
+                })
+                    .then((res) => {
+                        console.log(res, '...')
+                    })
+                    .catch((err) => {
+                        console.log(err, '..err')
+                    })
                 break
 
             case 'bt-edit':
@@ -116,9 +139,36 @@ export const useIndex = () => {
         console.log(val)
     }
 
-    const handelCreateTag = () => {
+    const handelCreateTag = (val: string) => {
+        console.log('%c 🦐 val: ', 'font-size:20px;background-color: #7F2B82;color:#fff;', val)
         state.dialogVisible = true
         state.dialogtitle = '新建标签'
+
+        switch (val) {
+            case 'power':
+                state.dialogtitle = '标签信息'
+                formState.formInfo.fieldList = [
+                    {
+                        label: '出单金额',
+                        value: 'money',
+                        type: 'slot',
+                        required: true,
+                        className: 'el-form-block'
+                    }
+                ]
+                break
+
+            default:
+                break
+        }
+    }
+
+    const selectAll = (select: any) => {
+        console.log(select)
+    }
+
+    const selectionChange = (select: any) => {
+        console.log(select)
     }
 
     const onConfirm = (value: string) => {
@@ -127,9 +177,14 @@ export const useIndex = () => {
             value,
             formState.formInfo.data.tagname,
             formState.formInfo.data.id,
+            formState.formInfo.ref,
             '....'
         )
         state.dialogVisible = false
+    }
+
+    const refreshTable = (target: string) => {
+        console.log(target)
     }
 
     return {
@@ -137,22 +192,25 @@ export const useIndex = () => {
         formState,
         ...toRefs(tableState),
         handleClick,
-        handleSelectTag,
         handleSizeChange,
         handleCurrentChange,
         handelCreateTag,
-        onConfirm
+        onConfirm,
+        refreshTable,
+        selectAll,
+        selectionChange
     }
 }
 
 const useTableData = () => {
     const tableList = {
-        TableListInfo: [
+        tableListInfo: [
             {
                 title: '注册来源',
                 timeTxt: '最后更新时间：',
                 time: '2021.04.11 00:01:30',
                 type: 'register',
+                target: 'source',
                 refresh: true,
                 create: true,
                 tableInfo: {
@@ -189,7 +247,6 @@ const useTableData = () => {
                     sortProp: 'name',
                     sortOrder: 1,
                     paging: false,
-
                     handle: {
                         fixed: 'right',
                         label: '操作',
@@ -219,6 +276,73 @@ const useTableData = () => {
                 timeTxt: '最后更新时间：',
                 time: '2021.04.11 00:01:30',
                 refresh: true,
+                target: 'addsource',
+                create: true,
+
+                tableInfo: {
+                    data: [
+                        {
+                            account: '测试数据',
+                            name: 200
+                        },
+                        {
+                            account: '测试数据1',
+                            name: 201
+                        },
+                        {
+                            account: '测试数据2',
+                            name: 202
+                        },
+                        {
+                            account: '测试数据3',
+                            name: 203
+                        },
+                        {
+                            account: '测试数据4',
+                            name: 204
+                        },
+                        {
+                            account: '测试数据5',
+                            name: 205
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'account' },
+                        { label: '人数', value: 'name', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: false,
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
+                            {
+                                label: '查看',
+                                type: 'text',
+                                event: 'check'
+                            },
+                            {
+                                label: '编辑',
+                                type: 'text',
+                                event: 'edit'
+                            },
+                            {
+                                label: '删除',
+                                type: 'text',
+                                event: 'del'
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '自定义标签',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                refresh: true,
+                target: 'customsource',
                 create: true,
                 tableInfo: {
                     data: [
@@ -255,7 +379,217 @@ const useTableData = () => {
                     sortOrder: 1,
                     paging: true,
                     total: 20,
+                    checkBox: true,
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
+                            {
+                                label: '查看',
+                                type: 'text',
+                                event: 'check',
+                                slot: true
+                            },
+                            {
+                                label: '编辑',
+                                type: 'text',
+                                event: 'edit',
+                                slot: true
+                            },
+                            {
+                                label: '删除',
+                                type: 'text',
+                                event: 'del',
+                                slot: true
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        dynamicListInfo: [
+            {
+                title: '是否注册唯享客',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                type: 'register',
+                refresh: true,
+                target: 'registerUser',
+                showUserNum: true,
+                create: false,
+                tableInfo: {
+                    data: [
+                        {
+                            tagname: '已注册唯享客',
+                            id: 200
+                        },
+                        {
+                            tagname: '已注册唯享客',
+                            id: 200
+                        },
+                        {
+                            tagname: '未注册唯享客',
+                            id: 200
+                        },
+                        {
+                            tagname: '已注册唯享客',
+                            id: 200
+                        },
+                        {
+                            tagname: '未注册唯享客',
+                            id: 200
+                        },
+                        {
+                            tagname: '已注册唯享客',
+                            id: 200
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'tagname' },
+                        { label: '人数', value: 'id', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: false,
 
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
+                            {
+                                label: '查看',
+                                type: 'text',
+                                event: 'check'
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '用户等级',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                refresh: true,
+                showUserNum: true,
+                create: false,
+                target: 'grade',
+                tableInfo: {
+                    data: [
+                        {
+                            account: '小宝',
+                            name: 200
+                        },
+                        {
+                            account: '达人',
+                            name: 201
+                        },
+                        {
+                            account: '经理',
+                            name: 202
+                        },
+                        {
+                            account: '总监',
+                            name: 203
+                        },
+                        {
+                            account: '总裁',
+                            name: 204
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'account' },
+                        { label: '人数', value: 'name', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: true,
+                    total: 20,
+
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
+                            {
+                                label: '查看',
+                                type: 'text',
+                                event: 'check'
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '是否出单',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                refresh: true,
+                target: 'issue',
+                showUserNum: true,
+                create: false,
+                tableInfo: {
+                    data: [
+                        {
+                            account: '已出单',
+                            name: 200
+                        },
+                        {
+                            account: '未出单',
+                            name: 201
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'account' },
+                        { label: '人数', value: 'name', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: false,
+                    checkBox: false,
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
+                            {
+                                label: '查看',
+                                type: 'text',
+                                event: 'check',
+                                slot: true
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '能力层级',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                refresh: true,
+                target: 'power',
+                showUserNum: true,
+                create: true,
+                tableInfo: {
+                    data: [
+                        {
+                            account: '1~5000元',
+                            name: 200
+                        },
+                        {
+                            account: '5000~1万元',
+                            name: 201
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'account' },
+                        { label: '人数', value: 'name', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: false,
+                    checkBox: false,
                     handle: {
                         fixed: 'right',
                         label: '操作',
@@ -281,36 +615,22 @@ const useTableData = () => {
                 }
             },
             {
-                title: '自定义标签',
+                title: '活跃情况',
                 timeTxt: '最后更新时间：',
                 time: '2021.04.11 00:01:30',
                 refresh: true,
-                create: true,
+                target: 'lively',
+                showUserNum: true,
+                create: false,
                 tableInfo: {
                     data: [
                         {
-                            account: '测试数据',
+                            account: '已出单',
                             name: 200
                         },
                         {
-                            account: '测试数据1',
+                            account: '未出单',
                             name: 201
-                        },
-                        {
-                            account: '测试数据2',
-                            name: 202
-                        },
-                        {
-                            account: '测试数据3',
-                            name: 203
-                        },
-                        {
-                            account: '测试数据4',
-                            name: 204
-                        },
-                        {
-                            account: '测试数据5',
-                            name: 205
                         }
                     ],
                     fieldList: [
@@ -320,7 +640,7 @@ const useTableData = () => {
                     sortProp: 'name',
                     sortOrder: 1,
                     paging: false,
-                    checkBox: true,
+                    checkBox: false,
                     handle: {
                         fixed: 'right',
                         label: '操作',
@@ -331,17 +651,89 @@ const useTableData = () => {
                                 type: 'text',
                                 event: 'check',
                                 slot: true
-                            },
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '添加时段',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                refresh: true,
+                target: 'addtime',
+                showUserNum: true,
+                create: false,
+                tableInfo: {
+                    data: [
+                        {
+                            account: '已出单',
+                            name: 200
+                        },
+                        {
+                            account: '未出单',
+                            name: 201
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'account' },
+                        { label: '人数', value: 'name', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: false,
+                    checkBox: false,
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
                             {
-                                label: '编辑',
+                                label: '查看',
                                 type: 'text',
-                                event: 'edit',
+                                event: 'check',
                                 slot: true
-                            },
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                title: '条件标签',
+                timeTxt: '最后更新时间：',
+                time: '2021.04.11 00:01:30',
+                refresh: true,
+                target: 'condition',
+                showUserNum: true,
+                create: true,
+                tableInfo: {
+                    data: [
+                        {
+                            account: '已出单',
+                            name: 200
+                        },
+                        {
+                            account: '未出单',
+                            name: 201
+                        }
+                    ],
+                    fieldList: [
+                        { label: '标签名称', value: 'account' },
+                        { label: '人数', value: 'name', sortable: true }
+                    ],
+                    sortProp: 'name',
+                    sortOrder: 1,
+                    paging: true,
+                    checkBox: false,
+                    handle: {
+                        fixed: 'right',
+                        label: '操作',
+                        width: '600',
+                        btList: [
                             {
-                                label: '删除',
+                                label: '查看',
                                 type: 'text',
-                                event: 'del',
+                                event: 'check',
                                 slot: true
                             }
                         ]

@@ -163,10 +163,9 @@ export default defineComponent({
     },
     emits: ['update:refObj', 'handleEvent', 'handleClick'],
     setup(props, { emit }) {
-        const formRef = ref<ElRef>(null)
+        const formRef = ref<ElRef>()
 
         onMounted(() => {
-            console.log()
             emit('update:refObj', formRef.value)
         })
 

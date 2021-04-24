@@ -26,6 +26,14 @@ const routes: Array<RouteRecordRaw> = [
             title: '个人用户详情'
         },
         component: () => import('@/views/qywxManage/userManage/userDetail.vue')
+    },
+    {
+        path: '/crowdManage',
+        name: 'crowdManage',
+        meta: {
+            title: '人群管理'
+        },
+        component: () => import('@/views/qywxManage/userManage/crowdManage.vue')
     }
 ]
 
