@@ -11,7 +11,7 @@
                     >
                         <template v-if="'0' === activeName">
                             <tag-table
-                                :tableListInfo="tableListInfo"
+                                :tabelList="tableListInfo"
                                 @handleClick="handleClick"
                                 @handleSizeChange="handleSizeChange"
                                 @handleCurrentChange="handleCurrentChange"
@@ -23,7 +23,7 @@
                         </template>
                         <template v-if="'1' === activeName">
                             <tag-table
-                                :tableListInfo="dynamicListInfo"
+                                :tabelList="dynamicListInfo"
                                 @handleClick="handleClick"
                                 @handleSizeChange="handleSizeChange"
                                 @handleCurrentChange="handleCurrentChange"

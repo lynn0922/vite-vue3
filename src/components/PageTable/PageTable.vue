@@ -141,7 +141,6 @@
 
     export default defineComponent({
         name: 'PageTable',
-        components: {},
         props: {
             // 自定义类名
             className: {

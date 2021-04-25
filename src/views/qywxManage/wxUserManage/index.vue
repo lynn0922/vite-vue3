@@ -21,17 +21,16 @@
                         >
                         </el-option>
                     </el-select>
-                    <el-input
+                    <el-cascader
+                        v-model="filter.selectTags"
                         placeholder="标签(同个分组下多选是并集，不同分组下多选是交集)"
-                        v-model="filter.tag"
-                        class="tagDialog"
-                        @focus="focus"
-                        style="margin: 0 30px; width: 215px; cursor: pointer"
-                    >
-                        <template #suffix>
-                            <i class="el-input__icon el-icon-arrow-down"></i>
-                        </template>
-                    </el-input>
+                        :options="filter.tagOptions"
+                        :clearable="true"
+                        :collapse-tags="true"
+                        :props="{ multiple: true, lazy: true, lazyLoad: lazyLoad }"
+                        filterable
+                        style="margin: 0 30px"
+                    ></el-cascader>
                     <el-button type="primary">查询</el-button>
                 </div>
                 <div class="list-bot">
@@ -42,7 +41,7 @@
                     >
                         <template #suffix>
                             <i class="el-input__icon el-icon-search"></i>
-                            <el-button type="text">上传</el-button>
+                            <!-- <el-button type="text">上传</el-button> -->
                         </template>
                     </el-input>
                     <el-select v-model="filter.group" placeholder="性别" style="margin: 0 30px">
@@ -66,7 +65,7 @@
                 <el-button type="primary">批量加群</el-button>
                 <el-button type="primary">创建用户群</el-button>
             </div>
-            <!-- <page-table
+            <page-table
                 :tableData="tabelData.data"
                 :checkBox="tabelData.checkBox"
                 :paging="tabelData.paging"
@@ -79,21 +78,26 @@
                 @select-all="selectAll"
                 @selection-change="selectionChange"
             >
-            </page-table> -->
+            </page-table>
         </div>
     </div>
 
     <page-dialog
         v-model:dialogVisible="dialogVisible"
         :dialogtitle="'请选择标签'"
-        :dialogwidth="'20%'"
+        :dialogwidth="'40%'"
         @on-confirm="onConfirm"
-    ></page-dialog>
+    >
+        <div class="tagGroup">
+            <div class=""></div>
+        </div>
+    </page-dialog>
 </template>
 
 <script lang="ts">
     import { useTableData } from '@/hooks/wxUserManage/usetable'
-    import { reactive } from 'vue'
+    import { useFilter } from '@/hooks/wxUserManage/useFilter'
+    import { ref } from 'vue'
     export default {
         name: 'wxUserManage',
         setup() {
@@ -102,32 +106,16 @@
                 handleSizeChange,
                 handleClick,
                 selectAll,
-                selectionChange
+                selectionChange,
+                handleCurrentChange
             } = useTableData()
 
-            const handleDowload = () => {
-                console.log('handleDowload')
-            }
+            const { filter, handleDowload, lazyLoad } = useFilter()
 
-            const filter = reactive({
-                value: '',
-                sex: '',
-                tag: '',
-                remark: '',
-                group: '',
+            const dialogVisible = ref(false)
 
-                sexOptions: [
-                    { label: '男', value: 0 },
-                    { label: '女', value: 1 }
-                ],
-                groupOptions: [
-                    { label: '我是好孩子群', value: 0 },
-                    { label: '我是好宝宝群', value: 1 }
-                ]
-            })
-
-            const focus = () => {
-                console.log('....focus')
+            const onConfirm = () => {
+                console.log('onConfirm')
             }
 
             return {
@@ -138,7 +126,10 @@
                 selectionChange,
                 handleDowload,
                 filter,
-                focus
+                onConfirm,
+                handleCurrentChange,
+                dialogVisible,
+                lazyLoad
             }
         }
     }
@@ -182,9 +173,9 @@
         }
     }
 
-    .tagDialog {
-        ::v-deep(.el-input__inner) {
-            cursor: pointer;
-        }
-    }
+    // .tagDialog {
+    //     ::v-deep(.el-input__inner) {
+    //         cursor: pointer;
+    //     }
+    // }
 </style>

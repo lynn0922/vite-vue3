@@ -1,5 +1,5 @@
 <template>
-    <div class="registered-table" v-for="(item, index) in tableListInfo" :key="index">
+    <div class="registered-table" v-for="(item, index) in tabelList" :key="index">
         <div class="table-row">
             <el-col :span="4">
                 <div class="row-one">
@@ -58,14 +58,31 @@
 </template>
 
 <script lang="ts">
-    import { PropType, reactive, toRefs } from 'vue'
+    import { onMounted, PropType, reactive, toRefs } from 'vue'
+    import { Basic, IfieldList, Ihandle } from '@/components/PageTable/tableTypes'
+
+    interface Iinfo {
+        title: string
+        timeTxt: string
+        time: string
+        refresh: boolean
+        target: string
+        create: boolean
+        tableInfo: {
+            data: Basic<any>[]
+            fieldList: IfieldList
+            sortProp: string
+            sortOrder: number
+            paging: boolean
+            handle: Ihandle
+        }
+    }
 
     export default {
         name: 'tagTable',
         props: {
-            tableListInfo: {
-                type: Object,
-                default: () => {},
+            tabelList: {
+                type: Array as PropType<Iinfo[]>,
                 required: true
             }
         },
@@ -79,6 +96,10 @@
             'selection-change'
         ],
         setup(props, { emit }) {
+            onMounted(() => {
+                console.log(props.tabelList)
+            })
+
             const handleClick = (event: string, row: any) => {
                 emit('handleClick', event, row)
             }

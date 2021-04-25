@@ -33,7 +33,7 @@
 <script lang="ts">
     import { defineComponent, onMounted, toRefs } from 'vue'
     import { useRoute } from 'vue-router'
-    import { usePageTable } from '@/hooks/tagLibrary/tagUserDetail'
+    import { usePageTable } from '@/hooks/tagLibrary/useTagUserDetail'
 
     export default defineComponent({
         name: 'tag-user-detail',

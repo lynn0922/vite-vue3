@@ -25,7 +25,7 @@
                     <div class="detail-content" v-if="item.name === 'detail'">
                         <div class="detail-title-fixed">
                             <span style="margin-right: 20px">固定标签</span>
-                            <el-button type="text" @click="addTag">添加标签</el-button>
+                            <!-- <el-button type="text" @click="addTag">添加标签</el-button> -->
                             <div class="tags">
                                 <el-tag
                                     v-for="tag in tags"
