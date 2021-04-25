@@ -54,11 +54,11 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue'
-    import { useIndex } from '@/hooks/userManageHook/useIndex'
+    import { useIndex } from '@/hooks/tagLibrary/useTag'
     import tagTable from './../components/tagTable.vue'
 
     export default defineComponent({
-        name: 'userManage',
+        name: 'tag-library',
         components: {
             tagTable
         },

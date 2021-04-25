@@ -1,37 +1,5 @@
 import { reactive, toRefs } from 'vue'
 
-export const useIndex = () => {
-    const state = reactive({
-        options: [
-            {
-                value: '选项1',
-                label: '黄金糕'
-            },
-            {
-                value: '选项2',
-                label: '双皮奶'
-            },
-            {
-                value: '选项3',
-                label: '蚵仔煎'
-            },
-            {
-                value: '选项4',
-                label: '龙须面'
-            },
-            {
-                value: '选项5',
-                label: '北京烤鸭'
-            }
-        ],
-        value: ''
-    })
-
-    return {
-        ...toRefs(state)
-    }
-}
-
 export const useTableData = () => {
     const data = {
         data: [
@@ -75,7 +43,28 @@ export const useTableData = () => {
 
     const tabelData = reactive(data)
 
+    const handleSizeChange = (val: number) => {
+        console.log(val)
+    }
+    const handleCurrentChange = (val: number) => {
+        console.log(val)
+    }
+    const handleClick = (val: string) => {
+        console.log(val)
+    }
+    const selectAll = (val: any[]) => {
+        console.log(val)
+    }
+    const selectionChange = (val: any[]) => {
+        console.log(val)
+    }
+
     return {
-        ...toRefs(tabelData)
+        tabelData,
+        handleSizeChange,
+        handleClick,
+        selectAll,
+        selectionChange,
+        handleCurrentChange
     }
 }

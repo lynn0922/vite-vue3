@@ -1,39 +1,47 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { App } from 'vue'
-import { PageEnum } from '@/enum/route'
+import { PageEnum, RoteName } from '@/enum/route'
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/',
-        name: 'Root',
-        redirect: PageEnum.USERMANAGE,
+        path: PageEnum.ROOT,
+        name: RoteName.ROOT,
+        redirect: PageEnum.TAGLIBRARY,
         meta: {
             title: 'Root'
         }
     },
     {
-        path: '/userManage',
-        name: 'userManage',
+        path: PageEnum.TAGLIBRARY,
+        name: RoteName.TAGLIBRARY,
         meta: {
-            title: '个人用户管理'
+            title: '标签库'
         },
-        component: () => import('@/views/qywxManage/userManage/userManage.vue')
+        component: () => import('@/views/qywxManage/tagLibrary/index.vue')
     },
     {
-        path: '/userDetail',
-        name: 'userDetail',
+        path: PageEnum.TAGUSERDETAIL,
+        name: RoteName.TAGUSERDETAIL,
         meta: {
-            title: '个人用户详情'
+            title: '标签库详情'
         },
-        component: () => import('@/views/qywxManage/userManage/userDetail.vue')
+        component: () => import('@/views/qywxManage/tagLibrary/tagUserDetail.vue')
     },
     {
-        path: '/crowdManage',
-        name: 'crowdManage',
+        path: PageEnum.WXUSERMANAGE,
+        name: RoteName.WXUSERMANAGE,
         meta: {
-            title: '人群管理'
+            title: '微信用户管理'
         },
-        component: () => import('@/views/qywxManage/userManage/crowdManage.vue')
+        component: () => import('@/views/qywxManage/wxUserManage/index.vue')
+    },
+    {
+        path: PageEnum.WXUSERDETAIL,
+        name: RoteName.WXUSERDETAIL,
+        meta: {
+            title: '微信用户详情'
+        },
+        component: () => import('@/views/qywxManage/wxUserManage/wxUserDetail.vue')
     }
 ]
 

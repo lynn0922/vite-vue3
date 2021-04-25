@@ -31,51 +31,51 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, toRefs } from 'vue'
-import { useRoute } from 'vue-router'
-import { usePageTable } from '@/hooks/userManageHook/useUserDetail'
+    import { defineComponent, onMounted, toRefs } from 'vue'
+    import { useRoute } from 'vue-router'
+    import { usePageTable } from '@/hooks/tagLibrary/tagUserDetail'
 
-export default defineComponent({
-    name: 'userDetail',
-    setup() {
-        const route = useRoute()
+    export default defineComponent({
+        name: 'tag-user-detail',
+        setup() {
+            const route = useRoute()
 
-        const { state, handleSizeChange, handleCurrentChange } = usePageTable()
+            const { state, handleSizeChange, handleCurrentChange } = usePageTable()
 
-        onMounted(() => {
-            console.log('....userDetail', route.query.id)
-        })
+            onMounted(() => {
+                console.log('....userDetail', route.query.id)
+            })
 
-        return {
-            ...toRefs(state),
-            handleSizeChange,
-            handleCurrentChange
+            return {
+                ...toRefs(state),
+                handleSizeChange,
+                handleCurrentChange
+            }
         }
-    }
-})
+    })
 </script>
 <style lang="scss" scoped>
-.registered-table {
-    @extend .border-global;
-    @extend .border-radius-10;
-    padding: 0 40px 10px 40px;
-    margin-bottom: 30px;
+    .registered-table {
+        @extend .border-global;
+        @extend .border-radius-10;
+        padding: 0 40px 10px 40px;
+        margin-bottom: 30px;
 
-    .table-row {
-        display: flex;
-        padding: 10px 0;
-        align-items: center;
-        border-bottom: 1px solid $--border-d7;
-        margin-bottom: 20px;
-
-        .row-title {
+        .table-row {
             display: flex;
+            padding: 10px 0;
             align-items: center;
+            border-bottom: 1px solid $--border-d7;
+            margin-bottom: 20px;
 
-            .two{
-                margin-left: 20px;
+            .row-title {
+                display: flex;
+                align-items: center;
+
+                .two {
+                    margin-left: 20px;
+                }
             }
         }
     }
-}
 </style>

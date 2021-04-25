@@ -1,4 +1,4 @@
-export enum ERROR_CODE {
+export const enum ERROR_CODE {
     apiNoResponse = 'ERR_20001',
     apiNoPermission = 'ERR_20002',
     apiNotLogin = 'ERR_20003',
@@ -9,7 +9,7 @@ export enum ERROR_CODE {
     resImageCutFail = 'ERR_3335'
 }
 
-export enum RESPONSE_STATUS {
+export const enum RESPONSE_STATUS {
     no_access = 401,
     no_login = 403,
     order_error = 300

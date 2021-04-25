@@ -10,6 +10,7 @@ import { useGlobComp } from '@/components/index'
 
 ;(async () => {
     const app = createApp(App)
+    
 
     useRequired(app)
     useGlobComp(app)
