@@ -6,11 +6,8 @@ import '@/assets/styles/index.scss'
 import { store, key } from './store'
 import router, { setupRouter } from './router'
 import { useGlobComp } from '@/components/index'
-
-
 ;(async () => {
     const app = createApp(App)
-    
 
     useRequired(app)
     useGlobComp(app)

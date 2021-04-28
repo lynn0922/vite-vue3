@@ -1,273 +1,36 @@
+import { Basic, IfieldList, Ihandle } from '@/components/PageTable/tableTypes'
 import { reactive } from 'vue'
 
+interface Iitem {
+    title: string
+    timeTxt: string
+    time: string
+    target: string
+    refresh?: boolean
+    showUserNum?: boolean
+    create?: boolean
+    userTotal?: number
+    tableInfo: {
+        data: Basic<any>[]
+        fieldList: IfieldList[]
+        sortProp?: string
+        total?: number
+        sortOrder?: number
+        paging?: boolean
+        checkBox?: boolean
+        handle: Ihandle
+    }
+}
+
+interface ItableList {
+    tableListInfo: Iitem[]
+    dynamicListInfo: Iitem[]
+}
+
 export const useTableData = () => {
-    const tableList = {
-        tableListInfo: [
-            {
-                title: '注册来源',
-                timeTxt: '最后更新时间：',
-                time: '2021.04.11 00:01:30',
-                type: 'register',
-                target: 'source',
-                refresh: true,
-                create: true,
-                tableInfo: {
-                    data: [
-                        {
-                            tagname: '测试数据',
-                            id: 200
-                        },
-                        {
-                            tagname: '测试数据',
-                            id: 200
-                        },
-                        {
-                            tagname: '测试数据',
-                            id: 200
-                        },
-                        {
-                            tagname: '测试数据',
-                            id: 200
-                        },
-                        {
-                            tagname: '测试数据',
-                            id: 200
-                        },
-                        {
-                            tagname: '测试数据',
-                            id: 200
-                        }
-                    ],
-                    fieldList: [
-                        { label: '标签名称', value: 'tagname' },
-                        { label: '人数', value: 'id', sortable: true }
-                    ],
-                    sortProp: 'name',
-                    sortOrder: 1,
-                    paging: false,
-                    handle: {
-                        fixed: 'right',
-                        label: '操作',
-                        width: '600',
-                        btList: [
-                            {
-                                label: '查看',
-                                type: 'text',
-                                event: 'check'
-                            }
-                            // {
-                            //     label: '编辑',
-                            //     type: 'text',
-                            //     event: 'edit'
-                            // },
-                            // {
-                            //     label: '删除',
-                            //     type: 'text',
-                            //     event: 'del'
-                            // }
-                        ]
-                    }
-                }
-            }
-        ],
-        dynamicListInfo: [
-            {
-                title: '是否注册唯享客',
-                timeTxt: '最后更新时间：',
-                time: '2021.04.11 00:01:30',
-                type: 'register',
-                refresh: true,
-                target: 'registerUser',
-                showUserNum: true,
-                create: false,
-                tableInfo: {
-                    data: [
-                        {
-                            tagname: '已注册唯享客',
-                            id: 200
-                        },
-                        {
-                            tagname: '已注册唯享客',
-                            id: 200
-                        },
-                        {
-                            tagname: '未注册唯享客',
-                            id: 200
-                        },
-                        {
-                            tagname: '已注册唯享客',
-                            id: 200
-                        },
-                        {
-                            tagname: '未注册唯享客',
-                            id: 200
-                        },
-                        {
-                            tagname: '已注册唯享客',
-                            id: 200
-                        }
-                    ],
-                    fieldList: [
-                        { label: '标签名称', value: 'tagname' },
-                        { label: '人数', value: 'id', sortable: true }
-                    ],
-                    sortProp: 'name',
-                    sortOrder: 1,
-                    paging: false,
-
-                    handle: {
-                        fixed: 'right',
-                        label: '操作',
-                        width: '600',
-                        btList: [
-                            {
-                                label: '查看',
-                                type: 'text',
-                                event: 'check'
-                            }
-                        ]
-                    }
-                }
-            },
-            {
-                title: '用户等级',
-                timeTxt: '最后更新时间：',
-                time: '2021.04.11 00:01:30',
-                refresh: true,
-                showUserNum: true,
-                create: false,
-                target: 'grade',
-                tableInfo: {
-                    data: [
-                        {
-                            account: '小宝',
-                            name: 200
-                        },
-                        {
-                            account: '达人',
-                            name: 201
-                        },
-                        {
-                            account: '经理',
-                            name: 202
-                        },
-                        {
-                            account: '总监',
-                            name: 203
-                        },
-                        {
-                            account: '总裁',
-                            name: 204
-                        }
-                    ],
-                    fieldList: [
-                        { label: '标签名称', value: 'account' },
-                        { label: '人数', value: 'name', sortable: true }
-                    ],
-                    sortProp: 'name',
-                    sortOrder: 1,
-                    paging: true,
-                    total: 20,
-
-                    handle: {
-                        fixed: 'right',
-                        label: '操作',
-                        width: '600',
-                        btList: [
-                            {
-                                label: '查看',
-                                type: 'text',
-                                event: 'check'
-                            }
-                        ]
-                    }
-                }
-            },
-            {
-                title: '是否出单',
-                timeTxt: '最后更新时间：',
-                time: '2021.04.11 00:01:30',
-                refresh: true,
-                target: 'issue',
-                showUserNum: true,
-                create: false,
-                tableInfo: {
-                    data: [
-                        {
-                            account: '已出单',
-                            name: 200
-                        },
-                        {
-                            account: '未出单',
-                            name: 201
-                        }
-                    ],
-                    fieldList: [
-                        { label: '标签名称', value: 'account' },
-                        { label: '人数', value: 'name', sortable: true }
-                    ],
-                    sortProp: 'name',
-                    sortOrder: 1,
-                    paging: false,
-                    checkBox: false,
-                    handle: {
-                        fixed: 'right',
-                        label: '操作',
-                        width: '600',
-                        btList: [
-                            {
-                                label: '查看',
-                                type: 'text',
-                                event: 'check',
-                                slot: true
-                            }
-                        ]
-                    }
-                }
-            },
-            {
-                title: '活跃情况',
-                timeTxt: '最后更新时间：',
-                time: '2021.04.11 00:01:30',
-                refresh: true,
-                target: 'lively',
-                showUserNum: true,
-                create: false,
-                tableInfo: {
-                    data: [
-                        {
-                            account: '已出单',
-                            name: 200
-                        },
-                        {
-                            account: '未出单',
-                            name: 201
-                        }
-                    ],
-                    fieldList: [
-                        { label: '标签名称', value: 'account' },
-                        { label: '人数', value: 'name', sortable: true }
-                    ],
-                    sortProp: 'name',
-                    sortOrder: 1,
-                    paging: false,
-                    checkBox: false,
-                    handle: {
-                        fixed: 'right',
-                        label: '操作',
-                        width: '600',
-                        btList: [
-                            {
-                                label: '查看',
-                                type: 'text',
-                                event: 'check',
-                                slot: true
-                            }
-                        ]
-                    }
-                }
-            }
-        ]
+    const tableList: ItableList = {
+        tableListInfo: [],
+        dynamicListInfo: []
     }
 
     const tableState = reactive(tableList)

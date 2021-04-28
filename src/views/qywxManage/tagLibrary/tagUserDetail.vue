@@ -4,52 +4,40 @@
             <div class="table-row">
                 <el-col :span="4">
                     <div class="row-title">
-                        <div class="one">标签组-标签名称</div>
-                        <div class="two">总共xx人</div>
+                        <div class="one"> 标签组-标签名称 </div>
+                        <div class="two"> 总共 {{ countTotal }} 人 </div>
                     </div>
                 </el-col>
                 <el-col :span="18">
                     <div class="row-title">
-                        <div class="one">查看时间：</div>
-                        <div class="two">2021.4.5 17:20:00</div>
+                        <div class="one"> 最后更新时间： </div>
+                        <div class="two">
+                            {{ lastUpdateTime }}
+                        </div>
                     </div>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary">导出</el-button>
+                    <!-- <el-button type="primary">导出</el-button> -->
                 </el-col>
             </div>
-            <page-table
-                :tableData="tableInfo.data"
-                :paging="tableInfo.paging"
-                :total="tableInfo.total"
-                @handleSizeChange="handleSizeChange"
-                @handleCurrentChange="handleCurrentChange"
-                :field-list="tableInfo.fieldList"
-            ></page-table>
+            <user-list-table />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import { defineComponent, onMounted, toRefs } from 'vue'
-    import { useRoute } from 'vue-router'
+    import { defineComponent, toRefs } from 'vue'
     import { usePageTable } from '@/hooks/tagLibrary/useTagUserDetail'
+    import userListTable from '../components/userListTable.vue'
 
     export default defineComponent({
-        name: 'tag-user-detail',
+        name: 'TagUserDetail',
+        components: { userListTable },
         setup() {
-            const route = useRoute()
-
-            const { state, handleSizeChange, handleCurrentChange } = usePageTable()
-
-            onMounted(() => {
-                console.log('....userDetail', route.query.id)
-            })
+            const { state } = usePageTable()
 
             return {
-                ...toRefs(state),
-                handleSizeChange,
-                handleCurrentChange
+                ...toRefs(state)
             }
         }
     })

@@ -1,20 +1,15 @@
-import {
-    defineComponent,
-    getCurrentInstance,
-    nextTick,
-    onMounted,
-    reactive,
-    toRefs,
-    watch
-} from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { getUserList } from '@/http/userManage'
+import { onMounted, reactive, ref, toRefs, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { initRules } from '@/utils/util'
 import { useFormData } from '@/hooks/tagLibrary/useForm'
 import { useTableData } from '@/hooks/tagLibrary/useTable'
 import { ElMessageBox } from 'element-plus'
 import { PageEnum } from '@/enum/route'
 import { TAGLIST, TAG } from '@/enum/tagList'
+import { getTagLibraryList, RefreshTagGroup } from '@/http/tagLIbrary'
+import { cloneDeep } from 'lodash-es'
+import { ResultEnum } from '@/enum/httpEnum'
+import { createNotification } from '../messageBox/useMessage'
 
 export const useIndex = () => {
     const router = useRouter()
@@ -28,9 +23,11 @@ export const useIndex = () => {
             { name: TAG.FIXED, label: TAGLIST[TAG.FIXED] },
             { name: TAG.DYNAMIC, label: TAGLIST[TAG.DYNAMIC] }
         ],
-        activeName: TAG.DYNAMIC,
+        activeName: TAG.FIXED,
         dialogtitle: '新建标签'
     })
+
+    const table = ref(tableState.tableListInfo)
 
     const initFormRules = () => {
         const formInfo = formState.formInfo
@@ -76,14 +73,107 @@ export const useIndex = () => {
 
     onMounted(() => {
         initFormRules()
+        getList()
     })
+
+    const getList = async (type: string = state.activeName) => {
+        const { records, total } = await getTagLibraryList({ type: type })
+
+        const itemTable = {
+            title: '',
+            timeTxt: '最后更新时间：',
+            time: '',
+            id: '',
+            target: '',
+            refresh: true,
+            showUserNum: false,
+            userTotal: 0,
+            create: true,
+            tableInfo: {
+                data: [],
+                fieldList: [
+                    { label: '标签名称', value: 'tagName' },
+                    { label: '人数', value: 'userCount', sortable: true }
+                ],
+                pagination: {
+                    page: 1,
+                    limit: 10,
+                    total: 0
+                },
+                sortProp: 'userCount',
+                sortOrder: 1,
+                paging: false,
+                checkBox: false,
+                handle: {
+                    fixed: 'right',
+                    label: '操作',
+                    width: '300',
+                    btList: [
+                        {
+                            label: '查看',
+                            type: 'text',
+                            event: 'check'
+                        }
+                        // {
+                        //     label: '编辑',
+                        //     type: 'text',
+                        //     event: 'edit'
+                        // },
+                        // {
+                        //     label: '删除',
+                        //     type: 'text',
+                        //     event: 'del'
+                        // }
+                    ]
+                }
+            }
+        }
+
+        if (type === TAG.FIXED && records.length !== 0 && total !== 0) {
+            const fixedTable = cloneDeep(itemTable)
+
+            records.map((item) => {
+                for (const t of tableState.tableListInfo) if (t.title === item.tagGroupName) return
+
+                fixedTable.target = item.tagGroupName
+                fixedTable.id = item.id
+                fixedTable.title = item.tagGroupName
+                fixedTable.time = item.lastUpdateTime || ''
+                fixedTable.tableInfo.data = item.tagList
+                fixedTable.create = false
+                tableState.tableListInfo.push(fixedTable)
+            })
+        }
+
+        if (type === TAG.DYNAMIC && records.length !== 0 && total !== 0) {
+            const dynamicTable = cloneDeep(itemTable)
+
+            records.map((item) => {
+                for (const t of tableState.dynamicListInfo) if (t.title === item.tagGroupName) return
+
+                dynamicTable.target = item.tagGroupName
+                dynamicTable.id = item.id
+                dynamicTable.title = item.tagGroupName
+                dynamicTable.userTotal = item.userTotal
+                dynamicTable.time = item.lastUpdateTime || ''
+                dynamicTable.tableInfo.data = item.tagList
+                dynamicTable.create = false
+                dynamicTable.showUserNum = true
+
+                tableState.dynamicListInfo.push(dynamicTable)
+            })
+        }
+    }
+
     const handleClick = (event: string, row: any) => {
         switch (event) {
             case 'check':
                 router.push({
                     path: PageEnum.TAGUSERDETAIL,
                     query: {
-                        id: '123456'
+                        id: row.id,
+                        lastUpdateTime: row.lastUpdateTime,
+                        countTotal: row.userCount
                     }
                 })
                 break
@@ -145,7 +235,6 @@ export const useIndex = () => {
     }
 
     const handelCreateTag = (val: string) => {
-        console.log('%c 🦐 val: ', 'font-size:20px;background-color: #7F2B82;color:#fff;', val)
         state.dialogVisible = true
         state.dialogtitle = '新建标签'
 
@@ -188,14 +277,30 @@ export const useIndex = () => {
         state.dialogVisible = false
     }
 
-    const refreshTable = (target: string) => {
-        console.log(target)
+    const refreshTable = async (item: any) => {
+        const { code } = await RefreshTagGroup(item.id)
+
+        if (code === ResultEnum.SUCCESS) {
+            createNotification({
+                title: '刷新成功',
+                message: ' 后台刷新中，需要一段时间，请稍等再看最新数据',
+                type: 'success'
+            })
+        }
+    }
+
+    const handleClickTab = (tab: any) => {
+        tab.paneName === TAG.FIXED
+            ? ((table.value as any) = tableState.tableListInfo)
+            : ((table.value as any) = tableState.dynamicListInfo)
+
+        getList(tab.paneName)
     }
 
     return {
         ...toRefs(state),
         formState,
-        ...toRefs(tableState),
+        table,
         handleClick,
         handleSizeChange,
         handleCurrentChange,
@@ -203,6 +308,7 @@ export const useIndex = () => {
         onConfirm,
         refreshTable,
         selectAll,
-        selectionChange
+        selectionChange,
+        handleClickTab
     }
 }

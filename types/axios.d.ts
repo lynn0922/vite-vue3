@@ -1,3 +1,1 @@
-declare interface MyAxiosRequestConfig {
-    
-}
+declare interface MyAxiosRequestConfig {}

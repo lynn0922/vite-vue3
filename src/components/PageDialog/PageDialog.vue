@@ -1,9 +1,9 @@
 <template>
     <div>
-        <el-dialog :title="title" v-model="visible" :width="width" @close="onClose">
+        <el-dialog v-model="visible" :title="title" :width="width" @close="onClose">
             <slot>Your Template</slot>
-            
-            <template #footer v-if="show">
+
+            <template v-if="show" #footer>
                 <span class="dialog-footer">
                     <el-button size="mini" @click="onClose">取 消</el-button>
                     <el-button size="mini" type="primary" @click="onConfirm">确 定</el-button>
@@ -17,8 +17,8 @@
     import { defineComponent, toRefs, reactive, watch, PropType } from 'vue'
     interface Props {
         dialogVisible: boolean
-        dialogtitle: string
-        dialogwidth: string
+        dialogTitle: string
+        dialogWidth: string
         dialogFooter: boolean
     }
     interface State {
@@ -34,11 +34,11 @@
                 type: Boolean as PropType<boolean>,
                 default: false
             },
-            dialogtitle: {
+            dialogTitle: {
                 type: String as PropType<string>,
                 default: ''
             },
-            dialogwidth: {
+            dialogWidth: {
                 type: String as PropType<string>,
                 default: '30%'
             },
@@ -47,17 +47,18 @@
                 default: true
             }
         },
+        emits: ['update:dialogVisible', 'on-confirm'],
         setup(props, { emit }) {
-            const { dialogVisible, dialogtitle, dialogwidth, dialogFooter } = toRefs(props as Props)
+            const { dialogVisible, dialogTitle, dialogWidth, dialogFooter } = toRefs(props as Props)
 
             const state = reactive<State>({
                 visible: dialogVisible.value,
-                title: dialogtitle.value,
-                width: dialogwidth.value,
+                title: dialogTitle.value,
+                width: dialogWidth.value,
                 show: dialogFooter.value
             })
             watch(
-                ([dialogVisible, dialogtitle]),
+                [dialogVisible, dialogTitle],
                 ([newValue, newTitle]) => {
                     state.visible = newValue
                     state.title = newTitle

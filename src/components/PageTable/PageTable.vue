@@ -9,28 +9,17 @@
             :max-height="maxHeight || undefined"
             :height="height"
             :row-class-name="tableRowClassName"
+            border
+            style="width: 100%"
             @selection-change="selectionChange"
             @row-click="tableRowClick"
             @sort-change="tableSortChange"
-            border
-            style="width: 100%"
             @select-all="selectAll"
         >
             <!-- 选择框 -->
-            <el-table-column
-                v-if="checkBox"
-                align="center"
-                :key="'selection'"
-                type="selection"
-                width="55"
-            />
+            <el-table-column v-if="checkBox" :key="'selection'" align="center" type="selection" width="55" />
             <!-- 序号 -->
-            <el-table-column
-                v-if="tabIndex"
-                align="center"
-                type="index"
-                width="55"
-            ></el-table-column>
+            <el-table-column v-if="tabIndex" align="center" type="index" width="55" />
 
             <!-- 列表 支持 自定义列 嵌套表格 标签显示 图片 -->
             <el-table-column
@@ -65,23 +54,14 @@
                         />
                     </template>
                     <!-- 标签 -->
-                    <el-tag v-else-if="item.type === 'tag'">{{ scope.row[item.value] }}</el-tag>
+                    <el-tag v-else-if="item.type === 'tag'">
+                        {{ scope.row[item.value] }}
+                    </el-tag>
                     <!-- 图片 -->
-                    <img
-                        v-else-if="item.type === 'image' && scope.row[item.value]"
-                        height="50px"
-                        :src="scope.row[item.value]"
-                    />
+                    <img v-else-if="item.type === 'image' && scope.row[item.value]" height="50px" :src="scope.row[item.value]" />
                     <!-- 其他 -->
                     <span v-else>
-                        {{
-                            getDataName({
-                                dataList: listTypeInfo ? listTypeInfo[item.list] : [],
-                                value: 'value',
-                                label: 'key',
-                                data: scope.row[item.value]
-                            }) || '-'
-                        }}
+                        {{ returnName(scope.row, item) || '-' }}
                     </span>
                 </template>
             </el-table-column>
@@ -97,11 +77,7 @@
                 <template #default="scope">
                     <template v-for="(item, index) in handle.btList">
                         <!-- 自定义操作类型 -->
-                        <slot
-                            v-if="item.slot"
-                            :name="'bt-' + item.event"
-                            :data="{ item, row: scope.row }"
-                        />
+                        <slot v-if="item.slot" :name="'bt-' + item.event" :data="{ item, row: scope.row }" />
                         <!-- 操作按钮 -->
                         <el-button
                             v-if="!item.slot && (!item.ifRender || item.ifRender(scope.row))"
@@ -109,10 +85,11 @@
                             :type="item.type"
                             :icon="item.icon"
                             :disabled="item.disabled"
-                            :loading="scope.row[item.loading]"
+                            :loading="returnLoading(scope.row, item) || false"
                             @click="handleClick(item.event, scope.row)"
-                            >{{ item.label }}</el-button
                         >
+                            {{ item.label }}
+                        </el-button>
                     </template>
                 </template>
             </el-table-column>
@@ -121,14 +98,14 @@
         <template v-if="paging">
             <div class="pagination-container">
                 <el-pagination
+                    :current-page="pagination.page"
+                    :page-sizes="listInfo.pageSizes"
+                    :page-size="pagination.limit"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pagination.total"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="listInfo.query.page"
-                    :page-sizes="listInfo.pageSizes"
-                    :page-size="listInfo.query.limit"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="total"
-                ></el-pagination>
+                />
             </div>
         </template>
     </div>
@@ -137,7 +114,7 @@
 <script lang="ts">
     import { defineComponent, PropType, reactive, toRefs } from 'vue'
     import { getDataName } from '@/utils/util'
-    import { Basic, IfieldList, Ihandle, IState } from './tableTypes'
+    import { Basic, IbtList, IfieldList, Ihandle, Ipagination, IState } from './tableTypes'
 
     export default defineComponent({
         name: 'PageTable',
@@ -187,8 +164,7 @@
 
             // 类型列表
             listTypeInfo: {
-                type: Object as PropType<Basic<any>>,
-                default: () => {}
+                type: Object as PropType<Basic<any>>
             },
 
             // 表格字段配置
@@ -199,23 +175,16 @@
             },
             // 操作栏配置
             handle: {
-                type: Object as PropType<Ihandle>,
-                default: () => {}
+                type: Object as PropType<Ihandle>
             },
             // 是否分页
             paging: {
-                type: Boolean as PropType<Boolean>,
+                type: Boolean as PropType<boolean>,
                 default: true
             },
             // 列表数据
             tableData: {
                 type: Array as PropType<Basic<any>[]>
-            },
-
-            // 数据总数量
-            total: {
-                type: Number as PropType<number>,
-                default: 0
             },
 
             // 是否有选择框
@@ -228,6 +197,18 @@
             tabIndex: {
                 type: Boolean as PropType<boolean>,
                 default: false
+            },
+
+            // 分页
+            pagination: {
+                type: Object as PropType<Ipagination>,
+                default: () => {
+                    return {
+                        page: 1,
+                        limit: 10,
+                        total: 0
+                    }
+                }
             }
         },
         emits: [
@@ -269,20 +250,12 @@
                 context.emit('row-click', { row, event, column })
             }
 
-            function tableSortChange({
-                column,
-                prop,
-                order
-            }: {
-                column: any
-                prop: any
-                order: any
-            }) {
+            function tableSortChange({ column, prop, order }: { column: any; prop: any; order: any }) {
                 /**
                  * 表格排序变化
                  * @type {object}
                  */
-                context.emit('sort-change', { column: prop, order })
+                context.emit('sort-change', { column, prop, order })
             }
 
             function selectAll(selection: any) {
@@ -302,20 +275,40 @@
             }
 
             const handleSizeChange = (val: number) => {
-                const query = state.listInfo.query
-                query.limit = val
-                query.page = 1
+                props.pagination.limit = val
+                props.pagination.page = 1
                 context.emit('handleSizeChange', val)
             }
 
             const handleCurrentChange = (val: number) => {
-                state.listInfo.query.page = val
+                props.pagination.page = val
                 context.emit('handleCurrentChange', val)
+            }
+
+            const returnName = (row: any, item: IfieldList) => {
+                if (item?.list) {
+                    const dataName = getDataName({
+                        dataList: (props.listTypeInfo as Basic<any>)[item?.list],
+                        value: 'value',
+                        label: 'key',
+                        data: row[item.value]
+                    })
+                    return dataName
+                }
+
+                return row[item.value]
+            }
+
+            const returnLoading = (row: any, item: IbtList) => {
+                if (item?.loading) {
+                    return row[item?.loading]
+                }
+
+                return false
             }
 
             return {
                 ...toRefs(state),
-                getDataName,
                 tableRowClassName,
                 selectionChange,
                 tableRowClick,
@@ -323,7 +316,9 @@
                 selectAll,
                 handleClick,
                 handleSizeChange,
-                handleCurrentChange
+                handleCurrentChange,
+                returnName,
+                returnLoading
             }
         }
     })

@@ -1,3 +1,5 @@
+/* eslint "@typescript-eslint/ban-types": ['off'] */
+
 const toString = Object.prototype.toString
 
 export function is(val: unknown, type: string) {
@@ -89,6 +91,7 @@ export const isServer = typeof window === 'undefined'
 export const isClient = !isServer
 
 export function isUrl(path: string): boolean {
+    // eslint-disable-next-line no-useless-escape
     const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/
     return reg.test(path)
 }

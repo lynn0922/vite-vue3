@@ -51,5 +51,5 @@ export interface IfieldList {
 export interface IlistType {
     key: string
     value: 1
-    disabled?: boolean,
+    disabled?: boolean
 }

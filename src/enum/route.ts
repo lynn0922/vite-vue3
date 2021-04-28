@@ -3,10 +3,10 @@
  */
 export const enum PageEnum {
     ROOT = '/',
-    TAGLIBRARY = '/tagLibrary', // 标签库
-    TAGUSERDETAIL = '/tagUserDetail', // 标签库详情
-    WXUSERMANAGE = '/wxUserManage', // 微信用户管理
-    WXUSERDETAIL = '/wxUserDetail' // 微信用户详情
+    TAGLIBRARY = '/tagLibrary',
+    TAGUSERDETAIL = '/tagUserDetail',
+    WXUSERMANAGE = '/wxUserManage',
+    WXUSERDETAIL = '/wxUserDetail'
 }
 
 /**
@@ -19,5 +19,3 @@ export const enum RoteName {
     WXUSERMANAGE = 'wxUserManage',
     WXUSERDETAIL = 'wxUserDetail'
 }
-
-

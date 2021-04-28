@@ -1,33 +1,33 @@
 import cryptoJs from 'crypto-js'
+import { isObject } from '@/utils/is'
+import { AxiosRequestConfig } from 'axios'
 
 /**
  * 请求header Authorization
  * @param {params} 请求参数
  */
 export function getApiSign(params: any) {
-    let paramKeys = Object.keys(params).sort()
-    let paramValues = paramKeys.map((key) =>
-        typeof params[key] !== 'undefined' ? params[key].toString() : ''
-    )
-    let str = paramValues.join('')
+    const paramKeys = Object.keys(params).sort()
+    const paramValues = paramKeys.map((key) => (typeof params[key] !== 'undefined' ? params[key].toString() : ''))
+    const str = paramValues.join('')
     let salt = 'ebd15ed3a9704ebbb7bfd051e4a1ca28' // 唯享客加签
-    let tokenSecret = getCookie('_csrf_token')
+    const tokenSecret = getCookie('_csrf_token')
     if (tokenSecret) {
         salt = salt + '&' + tokenSecret
     }
-    let sha1 = cryptoJs.algo.SHA1.create()
+    const sha1 = cryptoJs.algo.SHA1.create()
     sha1.reset()
     sha1.update(salt)
-    let hashed = sha1.finalize(str).toString()
+    const hashed = sha1.finalize(str).toString()
     return hashed
 }
 
 export function getCookie(cname: string) {
-    var name = cname + '='
-    var ca = document.cookie.split(';')
-    var i
-    var c
-    var caLength = ca.length
+    const name = cname + '='
+    const ca = document.cookie.split(';')
+    let i
+    let c
+    const caLength = ca.length
     for (i = 0; i < caLength; i += 1) {
         c = ca[i]
         while (c.charAt(0) === ' ') {
@@ -66,15 +66,10 @@ export const getDataName = (obj: { dataList: any[]; value: string; label: string
  * @param {*} fieldList
  * 初始化表单规则
  */
-export const initRules = (fieldList: {
-    type: string
-    required: boolean
-    validator: any
-    value: string
-}) => {
+export const initRules = (fieldList: { type: string; required: boolean; validator: any; value: string }) => {
     const obj: { [index: string]: any } = {}
     // 循环字段列表
-    for (const item of (fieldList as any)) {
+    for (const item of fieldList as any) {
         const type = item.type === 'select' ? '选择' : '输入'
         if (item.required) {
             if (item.validator) {
@@ -98,4 +93,60 @@ export const initRules = (fieldList: {
         }
     }
     return obj
+}
+
+/**
+ * Add the object as a parameter to the URL
+ * @param baseUrl url
+ * @param obj
+ * @returns {string}
+ * eg:
+ *  let obj = {a: '3', b: '4'}
+ *  setObjToUrlParams('www.baidu.com', obj)
+ *  ==>www.baidu.com?a=3&b=4
+ */
+export function setObjToUrlParams(baseUrl: string, obj: any): string {
+    let parameters = ''
+    for (const key in obj) {
+        parameters += key + '=' + encodeURIComponent(obj[key]) + '&'
+    }
+    parameters = parameters.replace(/&$/, '')
+    return /\?$/.test(baseUrl) ? baseUrl + parameters : baseUrl.replace(/\/?$/, '?') + parameters
+}
+
+export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
+    let key: string
+    for (key in target) {
+        src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key])
+    }
+    return src
+}
+
+/**
+ *
+ * @param config  移除请求中参数中的 空字符串，null, undefined
+ */
+export function clearEmptyParam(config: AxiosRequestConfig) {
+    ;['data', 'params'].forEach((item) => {
+        if ((config as any)[item]) {
+            const keys = Object.keys((config as any)[item])
+            if (keys.length) {
+                keys.forEach((key) => {
+                    const rawType = toRawType((config as any)[item])
+                    if (['', undefined, null].includes((config as any)[item][key]) && ['Object'].includes(rawType)) {
+                        delete (config as any)[item][key]
+                    }
+                })
+            }
+        }
+    })
+}
+
+/**
+ * @description 获取原始类型
+ * @param {*} value
+ * @returns {String} 类型字符串，如'String', 'Object', 'Null', 'Boolean', 'Number', 'Array'
+ */
+export function toRawType(value: any) {
+    return Object.prototype.toString.call(value).slice(8, -1)
 }

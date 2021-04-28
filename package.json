@@ -1,37 +1,47 @@
 {
-  "name": "vsp-admin-front",
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build:tsc": "vue-tsc --noEmit && vite build",
-    "build": "vite build",
-    "serve": "vite preview"
-  },
-  "dependencies": {
-    "axios": "^0.21.1",
-    "crypto-js": "^4.0.0",
-    "element-plus": "^1.0.2-beta.40",
-    "json-bigint": "^1.0.0",
-    "vue": "^3.0.5",
-    "vue-router": "^4.0.6",
-    "vuex": "^4.0.0"
-  },
-  "devDependencies": {
-    "@types/crypto-js": "^4.0.1",
-    "@types/json-bigint": "^1.0.0",
-    "@types/node": "^14.14.41",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
-    "@vitejs/plugin-vue": "^1.2.1",
-    "@vue/compiler-sfc": "^3.0.5",
-    "eslint": "^7.24.0",
-    "eslint-config-prettier": "^8.2.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-vue": "^7.9.0",
-    "prettier": "^2.2.1",
-    "sass": "^1.32.11",
-    "typescript": "^4.1.3",
-    "vite": "^2.1.5",
-    "vue-tsc": "^0.0.24"
-  }
+    "name": "vsp-admin-front",
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build:tsc": "vue-tsc --noEmit && vite build",
+        "build": "vite build",
+        "serve": "vite preview",
+        "eslint": "eslint --ext .js,.vue,.ts src --fix"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --staged"
+        }
+    },
+    "dependencies": {
+        "axios": "^0.21.1",
+        "crypto-js": "^4.0.0",
+        "element-plus": "^1.0.2-beta.40",
+        "lodash-es": "^4.17.21",
+        "qs": "^6.10.1",
+        "vue": "^3.0.5",
+        "vue-router": "^4.0.6",
+        "vuex": "^4.0.0"
+    },
+    "devDependencies": {
+        "@types/crypto-js": "^4.0.1",
+        "@types/lodash-es": "^4.17.4",
+        "@types/node": "^14.14.41",
+        "@types/qs": "^6.9.6",
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "@vitejs/plugin-vue": "^1.2.1",
+        "@vue/compiler-sfc": "^3.0.5",
+        "eslint": "^7.25.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^3.4.0",
+        "eslint-plugin-vue": "^7.9.0",
+        "husky": "^6.0.0",
+        "prettier": "2.2.1",
+        "pretty-quick": "^3.1.0",
+        "sass": "^1.32.11",
+        "typescript": "^4.2.4",
+        "vite": "^2.1.5",
+        "vue-tsc": "^0.0.24"
+    }
 }

@@ -1,48 +1,51 @@
 import { reactive } from 'vue'
+
+interface Istate {
+    activeName: string
+    tabData: {
+        label: string
+        name: string
+        disabled?: boolean
+    }[]
+    fixedTags: {
+        tagName: string
+        id: number
+    }[]
+    dynamicTags: {
+        tagName: string
+        id: number
+    }[]
+    dialogVisible: boolean
+    options: {
+        value: string
+        label: string
+    }[]
+    value: string
+    checkList: any[]
+    checkData: {
+        label: string
+        id: number
+    }[]
+}
+
 export const useTabs = () => {
-    const state = reactive({
+    const state = reactive<Istate>({
         activeName: 'detail',
         tabData: [
             {
                 label: '详细信息',
                 name: 'detail'
-            },
-            {
-                label: '群聊信息',
-                name: 'group',
-                disabled: true
             }
+            // {
+            //     label: '群聊信息',
+            //     name: 'group',
+            //     disabled: true
+            // }
         ],
-        tags: [
-            { name: '标签一', type: '' },
-            { name: '标签二', type: 'success' },
-            { name: '标签三', type: 'info' },
-            { name: '标签四', type: 'warning' },
-            { name: '标签五', type: 'danger' }
-        ],
+        fixedTags: [],
+        dynamicTags: [],
         dialogVisible: false,
-        options: [
-            {
-                value: '选项1',
-                label: '黄金糕'
-            },
-            {
-                value: '选项2',
-                label: '双皮奶'
-            },
-            {
-                value: '选项3',
-                label: '蚵仔煎'
-            },
-            {
-                value: '选项4',
-                label: '龙须面'
-            },
-            {
-                value: '选项5',
-                label: '北京烤鸭'
-            }
-        ],
+        options: [],
         value: '',
         checkList: [],
         checkData: [
@@ -56,7 +59,7 @@ export const useTabs = () => {
             { id: 7, label: '需加强联系' },
             { id: 8, label: '需加强联系' },
             { id: 9, label: '需加强联系' },
-            { id: 10, label: '需加强联系' },
+            { id: 10, label: '需加强联系' }
         ]
     })
 

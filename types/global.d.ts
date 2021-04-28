@@ -1,4 +1,4 @@
-import { App } from "vue";
+import { App } from 'vue'
 
 declare global {
     interface Window {
@@ -6,6 +6,6 @@ declare global {
         __APP__: App<Element>
     }
 
-    declare type Nullable<T> = T | null;
-    declare type Recordable<T = any> = Record<string, T>;
+    declare type Nullable<T> = T | null
+    declare type Recordable<T = any> = Record<string, T>
 }

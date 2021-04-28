@@ -1,8 +1,7 @@
 import { ElMessage } from 'element-plus'
 import { ElNotification } from 'element-plus'
-import { ElMessageBox } from 'element-plus'
+
 import { Position } from 'element-plus/lib/el-notification/src/notification.type'
-import { VNode } from 'vue'
 
 interface MessageOpt {
     status: string
@@ -19,10 +18,10 @@ export const createMessage = (Opt: MessageOpt) => {
 }
 
 interface Notification {
-    title: string
-    message: string
-    type: 'success' | 'warning' | 'info' | 'error'
-    position: Position
+    title?: string
+    message?: string
+    type?: 'success' | 'warning' | 'info' | 'error'
+    position?: Position
 }
 
 export const createNotification = (Opt: Notification) => {

@@ -10,7 +10,7 @@ export interface IfieldList {
     width?: string
     minWidth?: string
     children?: Ichildren[]
-    list: string
+    list?: string
     hidden?: boolean
 }
 
@@ -32,7 +32,7 @@ export interface Ihandle {
 }
 
 interface IfRenderFn {
-    (row: any): any;
+    (row: any): any
 }
 
 export interface IbtList {
@@ -43,15 +43,11 @@ export interface IbtList {
     icon?: string
     disabled?: boolean
     label?: string
-    loading: string
+    loading?: string
 }
 
 export interface Basic<T extends any> {
     [index: string]: T
-}
-
-export interface IlistTypeInfo {
-    [index: string]: any
 }
 
 export interface IState {
@@ -62,4 +58,10 @@ export interface IState {
             limit: number
         }
     }
+}
+
+export interface Ipagination {
+    page: number
+    limit: number
+    total: number
 }

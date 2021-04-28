@@ -1,23 +1,56 @@
-import { reactive } from 'vue'
+import { Gender, KeyEnum } from '@/enum/gender'
+import { getTagTree } from '@/http/tagLibrary'
+import { onMounted, reactive } from 'vue'
 
 export const useFilter = () => {
     const filter = reactive({
-        value: '',
-        sex: '',
-
-        remark: '',
-        group: '',
+        searchUserType: '',
+        searchUserKey: '',
+        gender: '',
+        ucodes: '',
+        tagIds: [],
 
         sexOptions: [
-            { label: '男', value: 0 },
-            { label: '女', value: 1 }
+            { label: Gender[0], value: Gender.未知 },
+            { label: Gender[1], value: Gender.男性 },
+            { label: Gender[2], value: Gender.女性 }
         ],
-        groupOptions: [
-            { label: '我是好孩子群', value: 0 },
-            { label: '我是好宝宝群', value: 1 }
-        ],
-        tagOptions: [
-            {
+        tagOptions: [],
+
+        searchKeyOpt: [
+            { label: KeyEnum[1], value: KeyEnum.用户昵称 },
+            { label: KeyEnum[2], value: KeyEnum.用户备注 }
+        ]
+    })
+
+    onMounted(() => {
+        getTree()
+    })
+
+    const handleDowload = () => {
+        console.log('handleDowload')
+    }
+
+    const getTree = async () => {
+        const { records } = await getTagTree()
+
+        ;(filter as any).tagOptions = records
+    }
+
+    const lazyLoad = (node: any, resolve: any) => {
+        console.log('....focus', node, resolve)
+    }
+
+    return {
+        filter,
+        handleDowload,
+
+        lazyLoad
+    }
+}
+
+/**
+ *  {
                 value: 'source',
                 label: '添加来源'
                 // children: [
@@ -35,54 +68,4 @@ export const useFilter = () => {
                 //     }
                 // ]
             },
-            {
-                value: 'level',
-                label: '用户等级'
-                // children: [
-                //     {
-                //         value: '0',
-                //         label: '小宝'
-                //     },
-                //     {
-                //         value: '1',
-                //         label: '达人'
-                //     },
-                //     {
-                //         value: '2',
-                //         label: '商学院'
-                //     }
-                // ]
-            },
-            {
-                value: 'source',
-                label: '是否出单'
-                // children: [
-                //     {
-                //         value: '0',
-                //         label: '已出单'
-                //     },
-                //     {
-                //         value: '1',
-                //         label: '未出单'
-                //     }
-                // ]
-            }
-        ],
-        selectTags: []
-    })
-
-    const handleDowload = () => {
-        console.log('handleDowload')
-    }
-
-    const lazyLoad = (node: any, resolve: any) => {
-        console.log('....focus', node, resolve)
-    }
-
-    return {
-        filter,
-        handleDowload,
-
-        lazyLoad
-    }
-}
+ */
