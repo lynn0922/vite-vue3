@@ -8,11 +8,6 @@
         "serve": "vite preview",
         "eslint": "eslint --ext .js,.vue,.ts src --fix"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "pretty-quick --staged"
-        }
-    },
     "dependencies": {
         "axios": "^0.21.1",
         "crypto-js": "^4.0.0",
