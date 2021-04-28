@@ -1,31 +1,38 @@
 <template>
-    <div>msg</div>
+<div>msg</div>
+<div>msg</div>
+<div>msg</div>
+<div>msg</div>
+<div>msg</div>
+<div>msg</div>
+<div>msg</div>
+<div>msg</div>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    // import { useStore } from 'vuex'
-    // import { key } from '../store'
+import { defineComponent } from 'vue'
+// import { useStore } from 'vuex'
+// import { key } from '../store'
 
-    export default defineComponent({
-        name: 'HelloWorld'
-        // props: {
-        //     msg: {
-        //         type: String,
-        //         required: true
-        //     }
-        // },
-        // setup: async () => {
-        //     const store = useStore(key)
-        //     const count = computed(() => store.state.count)
+export default defineComponent({
+    name: 'HelloWorld'
+    // props: {
+    //     msg: {
+    //         type: String,
+    //         required: true
+    //     }
+    // },
+    // setup: async () => {
+    //     const store = useStore(key)
+    //     const count = computed(() => store.state.count)
 
-        //     const { ctx } = getCurrentInstance() as any
-        //     // const res = await ctx.$api.get('home.banner')
-        //     // console.log('%c 🥝 res: ', 'font-size:20px;background-color: #E41A6A;color:#fff;', res);
+    //     const { ctx } = getCurrentInstance() as any
+    //     // const res = await ctx.$api.get('home.banner')
+    //     // console.log('%c 🥝 res: ', 'font-size:20px;background-color: #E41A6A;color:#fff;', res);
 
-        //     return { count, inCrement: () => store.commit('increment') }
-        // }
-    })
+    //     return { count, inCrement: () => store.commit('increment') }
+    // }
+})
 </script>
 
 <style scoped>
