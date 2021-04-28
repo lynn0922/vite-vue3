@@ -2,7 +2,6 @@
     <div>
         <el-dialog v-model="visible" :title="title" :width="width" @close="onClose">
             <slot>Your Template</slot>
-
             <template v-if="show" #footer>
                 <span class="dialog-footer">
                     <el-button size="mini" @click="onClose">取 消</el-button>
